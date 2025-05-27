@@ -55,7 +55,7 @@ ROOT_URLCONF = 'mercadoestudios.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'DameDoy' / 'templates' / 'html' ],  # GUILDERAñade esta línea
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,10 +115,19 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
+#Guilder: Añade la ruta de tu carpeta de archivos estáticos
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'DameDoy' / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# GUILDER Usa el nombre de la URL definida en urls.py para el login
+
+LOGIN_URL = '/html/login/'
+# GUILDER Configuración para manejar archivos multimedia
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

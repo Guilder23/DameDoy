@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mercado Estudios{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="nav-left">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'inicio' %}">Inicio</a>
+                        <a href="{% url 'lista_materiales' %}">
+                            <i class="fas fa-book"></i> Materiales
+                        </a>
+                        <a href="{% url 'publicar_material' %}">
+                            <i class="fas fa-upload"></i> Publicar
+                        </a>
+                        <a href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                        </a>
+                    {% else %}
+                        <a href="{% url 'lista_materiales' %}">
+                            <i class="fas fa-book"></i> Materiales
+                        </a>
+                        <a href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+                        </a>
+                        <a href="{% url 'registro' %}">
+                            <i class="fas fa-user-plus"></i> Registrarse
+                        </a>
+                    {% endif %}
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-sun" id="theme-icon"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Mercado Estudios</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/theme.js' %}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

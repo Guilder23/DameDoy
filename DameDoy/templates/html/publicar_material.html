@@ -1,0 +1,43 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Publicar Material{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/publicar_material.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="publicar-container">
+    <h1>Publicar Nuevo Material</h1>
+    
+    <form method="post" enctype="multipart/form-data" class="material-form">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+        <div class="alert alert-error">
+            Por favor corrige los errores indicados.
+        </div>
+        {% endif %}
+        
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="field-errors">
+                {% for error in field.errors %}
+                <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        <div class="form-actions">
+            <button type="submit" class="btn-publicar">Publicar Material</button>
+            <a href="{% url 'lista_materiales' %}" class="btn-cancelar">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

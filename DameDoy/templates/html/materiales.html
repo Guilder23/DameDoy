@@ -1,0 +1,123 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Materiales de Estudio{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/materiales.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="materiales-page">
+    <div class="cabecera-materiales">
+        <!-- Barra de búsqueda -->
+        <div class="search-bar">
+            <form method="get" class="search-form">
+                <input type="text" name="q" placeholder="Buscar materiales..." value="{{ request.GET.q }}">
+                <button type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- Panel de filtros horizontal -->
+        <div class="filtros-horizontales">
+            <form method="get" class="filtros-form">
+                {% if request.GET.q %}
+                <input type="hidden" name="q" value="{{ request.GET.q }}">
+                {% endif %}
+
+                <div class="filtros-grid">
+                    <div class="filtro-grupo">
+                        <label>Tipo</label>
+                        <select name="tipo">
+                            <option value="">Todos</option>
+                            {% for id, nombre in tipos %}
+                            <option value="{{ id }}" {% if filtros_actuales.tipo == id %}selected{% endif %}>
+                                {{ nombre }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filtro-grupo">
+                        <label>Facultad</label>
+                        <select name="facultad">
+                            <option value="">Todas</option>
+                            {% for facultad in facultades %}
+                            <option value="{{ facultad }}" {% if filtros_actuales.facultad == facultad %}selected{% endif %}>
+                                {{ facultad }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filtro-grupo">
+                        <label>Carrera</label>
+                        <select name="carrera">
+                            <option value="">Todas</option>
+                            {% for carrera in carreras %}
+                            <option value="{{ carrera }}" {% if filtros_actuales.carrera == carrera %}selected{% endif %}>
+                                {{ carrera }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filtro-grupo precio-range">
+                        <label>Precio</label>
+                        <div class="rango-inputs">
+                            <input type="number" name="precio_min" placeholder="Mín" value="{{ filtros_actuales.precio_min }}">
+                            <input type="number" name="precio_max" placeholder="Máx" value="{{ filtros_actuales.precio_max }}">
+                        </div>
+                    </div>
+
+                    <div class="filtro-grupo">
+                        <label>Ordenar</label>
+                        <select name="orden">
+                            <option value="-fecha_publicacion" {% if filtros_actuales.orden == '-fecha_publicacion' %}selected{% endif %}>Más recientes</option>
+                            <option value="precio" {% if filtros_actuales.orden == 'precio' %}selected{% endif %}>Menor precio</option>
+                            <option value="-precio" {% if filtros_actuales.orden == '-precio' %}selected{% endif %}>Mayor precio</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filtros-acciones">
+                    <button type="submit" class="btn-aplicar">Aplicar</button>
+                    <a href="{% url 'lista_materiales' %}" class="btn-limpiar">Limpiar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grid de materiales -->
+    <div class="materiales-contenedor">
+        {% for material in materiales %}
+        <article class="material-card">
+            <div class="material-imagen">
+                {% if material.imagen %}
+                <img src="{{ material.imagen.url }}" alt="{{ material.titulo }}">
+                {% else %}
+                <img src="{% static 'img/default-material.png' %}" alt="Imagen por defecto">
+                {% endif %}
+            </div>
+            <div class="material-info">
+                <h3>{{ material.titulo }}</h3>
+                <span class="tipo-badge">{{ material.get_tipo_display }}</span>
+                <p class="descripcion">{{ material.descripcion|truncatechars:100 }}</p>
+                <div class="metadata">
+                    <span class="facultad">{{ material.facultad }}</span>
+                    <span class="carrera">{{ material.carrera }}</span>
+                </div>
+                <div class="precio-autor">
+                    <span class="precio">$ {{ material.precio }}</span>
+                    <span class="autor">{{ material.autor.username }}</span>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <p class="no-resultados">No se encontraron materiales que coincidan con los criterios de búsqueda.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
