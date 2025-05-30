@@ -1,7 +1,7 @@
 {% extends 'html/base.html' %}
 {% load static %}
 
-{% block title %}Mi Perfil{% endblock %}
+{% block title %}{{ user.get_full_name|default:user.username }} | Perfil{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
@@ -9,141 +9,221 @@
 
 {% block content %}
 <div class="perfil-container">
-    <div class="perfil-header">
-        <div class="perfil-foto-container">
-        
-            {% if perfil.foto %}
-            <img src="{{ perfil.foto.url }}" alt="Foto de perfil" class="perfil-foto">
-            {% else %}
-            <div class="perfil-foto-placeholder">
-                <i class="fas fa-user"></i>
-            </div>
-            {% endif %}
-            <button type="button" class="btn-cambiar-foto" onclick="document.getElementById('id_foto').click()">
-                <i class="fas fa-camera"></i>
-            </button>
-        </div>
-        <div class="perfil-info-basica">
-            <h1>{{ user.get_full_name|default:user.username }}</h1>
-            <p class="perfil-rol">Usuario</p>
-            <button id="toggleBtn" class="toggleBtn">Editar</button>
-        </div>
-        
+    <div class="perfil-portada">
+        {% if perfil.foto_portada %}
+        <img src="{{ perfil.foto_portada.url }}" alt="Portada" class="portada-img">
+        {% else %}
+        <div class="portada-placeholder"></div>
+        {% endif %}
+        <button type="button" class="btn-cambiar-portada" onclick="document.getElementById('id_foto_portada').click()">
+            <i class="fas fa-camera"></i> Editar foto de portada
+        </button>
     </div>
 
-    <div class="perfil-content">
-        
-        <form method="POST" enctype="multipart/form-data" class="perfil-form">
-            {% csrf_token %}
-            <input type="file" id="id_foto" name="foto" hidden accept="image/*" onchange="mostrarVistaPrevia(this)">
-
-            <div class="form-section">
-                <h2>Información Personal</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="first_name">Nombre</label>
-                        <input type="text" id="first_name" name="first_name" disabled value="{{ user.first_name }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="last_name">Apellido</label>
-                        <input type="text" id="last_name" name="last_name" disabled value="{{ user.last_name }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" disabled value="{{ user.email }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="telefono">Teléfono</label>
-                        <input type="tel" id="telefono" name="telefono" disabled value="{{ perfil.telefono }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="direccion">Dirección</label>
-                        <input type="text" id="direccion" name="direccion" disabled value="{{ perfil.direccion }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="fecha_nacimiento">fecha_nacimiento</label>
-                        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" disabled value="{{ perfil.fecha_nacimiento }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="genero">Género</label>
-                        <select id="genero" name="genero" disabled >
-                            <option value="" {% if perfil.genero == "" %}selected{% endif %}>Seleccione</option>
-                            <option value="masculino" {% if perfil.genero == "masculino" %}selected{% endif %}>Masculino</option>
-                            <option value="femenino" {% if perfil.genero == "femenino" %}selected{% endif %}>Femenino</option>
-                            <option value="otro" {% if perfil.genero == "otro" %}selected{% endif %}>Otro</option>
-                        </select>
-                    </div>
-            </div>
-
-            <div class="form-section">
-                <h2>Sobre Mí</h2>
-                <div class="form-group">
-                    <label for="biografia">Biografía</label>
-                    <textarea id="biografia" name="biografia" disabled rows="4">{{ perfil.biografia }}</textarea>
+    <div class="perfil-info-principal">
+        <div class="perfil-header-content">
+            <div class="perfil-foto-container">
+                {% if perfil.foto %}
+                <img src="{{ perfil.foto.url }}" alt="Foto de perfil" class="perfil-foto">
+                {% else %}
+                <div class="perfil-foto-placeholder">
+                    <i class="fas fa-user"></i>
                 </div>
-            </div>
-
-            <div class="form-section">
-                <h2>Redes Sociales</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="facebook">
-                            <i class="fab fa-facebook"></i> Facebook
-                        </label>
-                        <input type="url" id="facebook" name="facebook" disabled value="{{ perfil.redes_sociales.facebook }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="twitter">
-                            <i class="fab fa-twitter"></i> Twitter
-                        </label>
-                        <input type="url" id="twitter" name="twitter" disabled value="{{ perfil.redes_sociales.twitter }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="instagram">
-                            <i class="fab fa-instagram"></i> Instagram
-                        </label>
-                        <input type="url" id="instagram" name="instagram" disabled value="{{ perfil.redes_sociales.instagram }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="linkedin">
-                            <i class="fab fa-linkedin"></i> LinkedIn
-                        </label>
-                        <input type="url" id="linkedin" name="linkedin"disabled value="{{ perfil.redes_sociales.linkedin }}">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn-guardar">
-                    <i class="fas fa-save"></i> Guardar Cambios
+                {% endif %}
+                <button type="button" class="btn-cambiar-foto" onclick="document.getElementById('id_foto').click()">
+                    <i class="fas fa-camera"></i>
                 </button>
             </div>
-        </form>
+
+            <div class="perfil-info-basica">
+                <h1>{{ user.get_full_name|default:user.username }}</h1>
+                {% if perfil.biografia %}
+                <p class="perfil-bio">{{ perfil.biografia|truncatechars:150 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="perfil-acciones">
+                <button id="toggleBtn" class="btn-editar">
+                    <i class="fas fa-pencil-alt"></i> Editar información
+                </button>
+            </div>
+        </div>
+
+        <div class="perfil-navegacion">
+            <nav class="nav-perfil">
+                <a href="#informacion" class="active">Información</a>
+                <a href="#publicaciones">Publicaciones</a>
+                <a href="#materiales">Materiales</a>
+                <a href="#amigos">Amigos</a>
+                <a href="#fotos">Fotos</a>
+            </nav>
+        </div>
+
+        <div class="perfil-contenido">
+            <div class="perfil-columna-izquierda">
+                <div class="seccion-info">
+                    <h3>Detalles</h3>
+                    <ul class="lista-info">
+                        {% if user.email %}
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>{{ user.email }}</span>
+                        </li>
+                        {% endif %}
+                        {% if perfil.telefono %}
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <span>{{ perfil.telefono }}</span>
+                        </li>
+                        {% endif %}
+                        {% if perfil.direccion %}
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ perfil.direccion }}</span>
+                        </li>
+                        {% endif %}
+                        {% if perfil.fecha_nacimiento %}
+                        <li>
+                            <i class="fas fa-birthday-cake"></i>
+                            <span>{{ perfil.fecha_nacimiento }}</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="seccion-info">
+                    <h3>Redes sociales</h3>
+                    <div class="redes-sociales">
+                        {% if perfil.redes_sociales.facebook %}
+                        <a href="{{ perfil.redes_sociales.facebook }}" target="_blank" class="red-social facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        {% endif %}
+                        {% if perfil.redes_sociales.twitter %}
+                        <a href="{{ perfil.redes_sociales.twitter }}" target="_blank" class="red-social twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        {% endif %}
+                        {% if perfil.redes_sociales.instagram %}
+                        <a href="{{ perfil.redes_sociales.instagram }}" target="_blank" class="red-social instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        {% endif %}
+                        {% if perfil.redes_sociales.linkedin %}
+                        <a href="{{ perfil.redes_sociales.linkedin }}" target="_blank" class="red-social linkedin">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="perfil-columna-derecha">
+                <form method="POST" enctype="multipart/form-data" class="perfil-form" id="form-perfil" style="display: none;">
+                    {% csrf_token %}
+                    <input type="file" id="id_foto" name="foto" hidden accept="image/*" onchange="mostrarVistaPrevia(this, '.perfil-foto')">
+                    <input type="file" id="id_foto_portada" name="foto_portada" hidden accept="image/*" onchange="mostrarVistaPrevia(this, '.portada-img')">
+
+                    <div class="form-section" id="informacion">
+                        <h2>Información Personal</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="first_name">Nombre</label>
+                                <input type="text" id="first_name" name="first_name" disabled value="{{ user.first_name }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="last_name">Apellido</label>
+                                <input type="text" id="last_name" name="last_name" disabled value="{{ user.last_name }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" disabled value="{{ user.email }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="telefono">Teléfono</label>
+                                <input type="tel" id="telefono" name="telefono" disabled value="{{ perfil.telefono }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="direccion">Dirección</label>
+                                <input type="text" id="direccion" name="direccion" disabled value="{{ perfil.direccion }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" disabled value="{{ perfil.fecha_nacimiento }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="genero">Género</label>
+                                <select id="genero" name="genero" disabled >
+                                    <option value="" {% if perfil.genero == "" %}selected{% endif %}>Seleccione</option>
+                                    <option value="masculino" {% if perfil.genero == "masculino" %}selected{% endif %}>Masculino</option>
+                                    <option value="femenino" {% if perfil.genero == "femenino" %}selected{% endif %}>Femenino</option>
+                                    <option value="otro" {% if perfil.genero == "otro" %}selected{% endif %}>Otro</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Sobre Mí</h2>
+                        <div class="form-group">
+                            <label for="biografia">Biografía</label>
+                            <textarea id="biografia" name="biografia" disabled rows="4">{{ perfil.biografia }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Redes Sociales</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="facebook">
+                                    <i class="fab fa-facebook"></i> Facebook
+                                </label>
+                                <input type="url" id="facebook" name="facebook" disabled value="{{ perfil.redes_sociales.facebook }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="twitter">
+                                    <i class="fab fa-twitter"></i> Twitter
+                                </label>
+                                <input type="url" id="twitter" name="twitter" disabled value="{{ perfil.redes_sociales.twitter }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="instagram">
+                                    <i class="fab fa-instagram"></i> Instagram
+                                </label>
+                                <input type="url" id="instagram" name="instagram" disabled value="{{ perfil.redes_sociales.instagram }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="linkedin">
+                                    <i class="fab fa-linkedin"></i> LinkedIn
+                                </label>
+                                <input type="url" id="linkedin" name="linkedin"disabled value="{{ perfil.redes_sociales.linkedin }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-guardar">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-function mostrarVistaPrevia(input) {
+function mostrarVistaPrevia(input, imgClass) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
         reader.onload = function(e) {
-            document.querySelector('.perfil-foto').src = e.target.result;
+            document.querySelector(imgClass).src = e.target.result;
         };
         reader.readAsDataURL(input.files[0]);
     }
 }
 </script>
-  <script>
-    const inputs = document.querySelectorAll('input');
-    const toggleBtn = document.getElementById('toggleBtn');
-    let bloqueado = false;
-
-    toggleBtn.addEventListener('click', () => {
-      bloqueado = !bloqueado;
-      inputs.forEach(el => el.disabled = bloqueado);
-      toggleBtn.textContent = bloqueado ? 'Editar' : 'No editar';
-    });
-  </script>
+<script src="{% static 'js/perfil.js' %}"></script>
 {% endblock %}

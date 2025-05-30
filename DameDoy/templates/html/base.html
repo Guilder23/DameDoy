@@ -29,18 +29,26 @@
                     {% endif %}
                 </div>
                 
-                <div class="nav-right">
-                    <button class="theme-toggle" onclick="toggleTheme()">
-                        <i class="fas fa-sun" id="theme-icon"></i>
-                    </button>
-                    
-                    {% if user.is_authenticated %}
-                        <span class="user-greeting">Hola, {{ user.username }}!</span>
-                    {% else %}
-                        <span class="user-greeting">Bienvenido, visitante!</span>
-                    {% endif %}
+<div class="nav-right">
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-sun" id="theme-icon"></i>
+    </button>
+    
+    {% if user.is_authenticated %}
+        <div class="user-profile">
+            {% if user.perfilusuario.foto %}
+                <img src="{{ user.perfilusuario.foto.url }}" alt="Foto de perfil" class="header-perfil-foto">
+            {% else %}
+                <div class="header-perfil-placeholder">
+                    <i class="fas fa-user"></i>
                 </div>
-            </nav>
+            {% endif %}
+            <span class="user-greeting">Hola, {{ user.first_name|default:user.username }}!</span>
+        </div>
+    {% else %}
+        <span class="user-greeting">Bienvenido, visitante!</span>
+    {% endif %}
+</div>
         </div>
     </header>
 

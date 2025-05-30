@@ -40,6 +40,7 @@ class PerfilUsuario(models.Model):
     ]
     
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+    foto_portada = models.ImageField(upload_to='portadas/', null=True, blank=True)
     foto = models.ImageField(upload_to='perfiles/', null=True, blank=True)
     telefono = models.CharField(max_length=15, null=True, blank=True)
     direccion = models.CharField(max_length=200, null=True, blank=True)

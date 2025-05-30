@@ -7,6 +7,8 @@ from .models import Material, PerfilUsuario  # Quitamos Facultad
 from django.db.models import Q
 from .forms import MaterialForm
 import json
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 @login_required
 def inicio(request):
@@ -131,9 +133,11 @@ def perfil_usuario(request):
         }
         perfil.redes_sociales = redes_sociales
         
-        # Manejar foto de perfil
+        # Manejar fotos
         if 'foto' in request.FILES:
             perfil.foto = request.FILES['foto']
+        if 'foto_portada' in request.FILES:
+            perfil.foto_portada = request.FILES['foto_portada']
         
         perfil.save()
         messages.success(request, 'Perfil actualizado exitosamente')
@@ -144,3 +148,20 @@ def perfil_usuario(request):
         'redes_sociales': json.dumps(perfil.redes_sociales)
     }
     return render(request, 'html/perfil_usuario.html', context)
+
+@require_POST
+@login_required
+def actualizar_imagen(request):
+    try:
+        perfil = request.user.perfilusuario
+        tipo = request.POST.get('tipo')
+        
+        if tipo == 'foto' and 'foto' in request.FILES:
+            perfil.foto = request.FILES['foto']
+        elif tipo == 'foto_portada' and 'foto_portada' in request.FILES:
+            perfil.foto_portada = request.FILES['foto_portada']
+        
+        perfil.save()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})

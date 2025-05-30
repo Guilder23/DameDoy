@@ -114,6 +114,17 @@ main {
     --breakpoint-sm: 768px;
     --breakpoint-md: 992px;
     --breakpoint-lg: 1200px;
+
+    /* Variables adicionales para el perfil */
+    --color-perfil-azul: #1877f2;
+    --color-perfil-azul-hover: #166fe5;
+    --color-perfil-texto: #050505;
+    --color-perfil-texto-secundario: #65676b;
+    --color-perfil-separador: #dadde1;
+    --color-perfil-fondo-hover: #f2f2f2;
+    --color-perfil-redes-twitter: #1da1f2;
+    --color-perfil-redes-instagram: #e4405f;
+    --color-perfil-redes-linkedin: #0077b5;
 }
 
 /* Variables modo claro */
@@ -326,22 +337,50 @@ nav {
     color: var(--fondo-primario);
 }
 
+/* Estilos para el perfil en el header */
+/* Ajusta el nav-right */
 .nav-right {
     display: flex;
     align-items: center;
     gap: var(--espaciado-md);
 }
-.nav-right button {
+.theme-toggle {
     background: none;
     border: none;
     color: var(--texto-primario);
     cursor: pointer;
-    padding: var(--espaciado-sm);
+    padding: var(--espaciado-xs);
     border-radius: var(--radio-borde-sm);
     transition: var(--transicion-normal);
 }
-.nav-right button:hover {
-    background-color: var(--fondo-terciario);
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-sm);
+}
+
+.header-perfil-foto,
+.header-perfil-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-primario);
+}
+
+.header-perfil-placeholder {
+    background: var(--fondo-terciario);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--texto-secundario);
+    font-size: var(--tamaño-texto-sm);
+}
+
+.user-greeting {
+    color: var(--texto-primario);
+    font-weight: var(--peso-medio);
+    font-size: var(--tamaño-texto-sm);
 }
 
 /* Sidebar derecho */
