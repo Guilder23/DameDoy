@@ -104,6 +104,7 @@
             <div class="material-info">
                 <h3>{{ material.titulo }}</h3>
                 <span class="tipo-badge">{{ material.get_tipo_display }}</span>
+                <span class="docente">{{material.docente|truncatechars:15}} </span>
                 <p class="descripcion">{{ material.descripcion|truncatechars:100 }}</p>
                 <div class="metadata">
                     <span class="facultad">{{ material.facultad }}</span>
