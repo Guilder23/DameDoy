@@ -9,4 +9,5 @@ urlpatterns = [
     #path('html/materiales/', views.lista_materiales, name='materiales'),
     path('html/materiales/', views.lista_materiales, name='lista_materiales'),
     path('html/publicar/', views.publicar_material, name='publicar_material'),
+    path('html/perfil/', views.perfil_usuario, name='perfil_usuario'),
 ]

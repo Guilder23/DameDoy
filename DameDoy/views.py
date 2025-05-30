@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required #Login requerido
-from .models import Material
+from django.contrib.auth.decorators import login_required
+from .models import Material, PerfilUsuario  # Quitamos Facultad
 from django.db.models import Q
 from .forms import MaterialForm
+import json
 
 @login_required
 def inicio(request):
@@ -32,6 +33,7 @@ def login_view(request):
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user is not None:
             login(request, user)
+            messages.success(request, '¡Has iniciado sesión correctamente!')
             return redirect('inicio')
         else:
             messages.error(request, 'Usuario o contraseña incorrectos.')
@@ -42,13 +44,6 @@ def logout_view(request):
     return redirect('login')
 
 #MOSTRAR MATERIALES---------------------------------------------------------
-# filepath: c:\Users\GUILDER\Desktop\PROYECTOS\ProyectosDjango\mercadoestudios\DameDoy\views.py
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Material
-from .forms import MaterialForm
-
 @login_required
 def publicar_material(request):
     if request.method == 'POST':
@@ -57,7 +52,7 @@ def publicar_material(request):
             material = form.save(commit=False)
             material.autor = request.user
             material.save()
-            messages.success(request, '¡Material publicado exitosamente!')
+            messages.success(request, '¡Material publicado exitosamente...!' +  material.titulo)
             return redirect('lista_materiales')
     else:
         form = MaterialForm()
@@ -96,11 +91,7 @@ def lista_materiales(request):
     if precio_max:
         materiales = materiales.filter(precio__lte=precio_max)
     
-    # Ordenamiento
-    orden = request.GET.get('orden', '-fecha_publicacion')
-    materiales = materiales.order_by(orden)
-    
-    # Obtener valores únicos para los filtros
+    # Obtener valores únicos para los filtros directamente de los materiales
     facultades = Material.objects.values_list('facultad', flat=True).distinct()
     carreras = Material.objects.values_list('carrera', flat=True).distinct()
     
@@ -112,3 +103,44 @@ def lista_materiales(request):
         'filtros_actuales': request.GET,
     }
     return render(request, 'html/materiales.html', context)
+
+@login_required
+def perfil_usuario(request):
+    perfil, created = PerfilUsuario.objects.get_or_create(usuario=request.user)
+    
+    if request.method == 'POST':
+        # Actualizar datos del usuario
+        request.user.first_name = request.POST.get('first_name', '')
+        request.user.last_name = request.POST.get('last_name', '')
+        request.user.email = request.POST.get('email', '')
+        request.user.save()
+        
+        # Actualizar datos del perfil
+        perfil.telefono = request.POST.get('telefono', '')
+        perfil.biografia = request.POST.get('biografia', '')
+        perfil.direccion = request.POST.get('direccion', '')
+        perfil.fecha_nacimiento = request.POST.get('fecha_nacimiento') or None
+        perfil.genero = request.POST.get('genero', '')
+        
+        # Manejar redes sociales
+        redes_sociales = {
+            'facebook': request.POST.get('facebook', ''),
+            'twitter': request.POST.get('twitter', ''),
+            'instagram': request.POST.get('instagram', ''),
+            'linkedin': request.POST.get('linkedin', '')
+        }
+        perfil.redes_sociales = redes_sociales
+        
+        # Manejar foto de perfil
+        if 'foto' in request.FILES:
+            perfil.foto = request.FILES['foto']
+        
+        perfil.save()
+        messages.success(request, 'Perfil actualizado exitosamente')
+        return redirect('perfil_usuario')
+
+    context = {
+        'perfil': perfil,
+        'redes_sociales': json.dumps(perfil.redes_sociales)
+    }
+    return render(request, 'html/perfil_usuario.html', context)

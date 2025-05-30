@@ -1,0 +1,149 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="perfil-container">
+    <div class="perfil-header">
+        <div class="perfil-foto-container">
+        
+            {% if perfil.foto %}
+            <img src="{{ perfil.foto.url }}" alt="Foto de perfil" class="perfil-foto">
+            {% else %}
+            <div class="perfil-foto-placeholder">
+                <i class="fas fa-user"></i>
+            </div>
+            {% endif %}
+            <button type="button" class="btn-cambiar-foto" onclick="document.getElementById('id_foto').click()">
+                <i class="fas fa-camera"></i>
+            </button>
+        </div>
+        <div class="perfil-info-basica">
+            <h1>{{ user.get_full_name|default:user.username }}</h1>
+            <p class="perfil-rol">Usuario</p>
+            <button id="toggleBtn" class="toggleBtn">Editar</button>
+        </div>
+        
+    </div>
+
+    <div class="perfil-content">
+        
+        <form method="POST" enctype="multipart/form-data" class="perfil-form">
+            {% csrf_token %}
+            <input type="file" id="id_foto" name="foto" hidden accept="image/*" onchange="mostrarVistaPrevia(this)">
+
+            <div class="form-section">
+                <h2>Información Personal</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="first_name">Nombre</label>
+                        <input type="text" id="first_name" name="first_name" disabled value="{{ user.first_name }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Apellido</label>
+                        <input type="text" id="last_name" name="last_name" disabled value="{{ user.last_name }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" disabled value="{{ user.email }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono" disabled value="{{ perfil.telefono }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        <input type="text" id="direccion" name="direccion" disabled value="{{ perfil.direccion }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_nacimiento">fecha_nacimiento</label>
+                        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" disabled value="{{ perfil.fecha_nacimiento }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="genero">Género</label>
+                        <select id="genero" name="genero" disabled >
+                            <option value="" {% if perfil.genero == "" %}selected{% endif %}>Seleccione</option>
+                            <option value="masculino" {% if perfil.genero == "masculino" %}selected{% endif %}>Masculino</option>
+                            <option value="femenino" {% if perfil.genero == "femenino" %}selected{% endif %}>Femenino</option>
+                            <option value="otro" {% if perfil.genero == "otro" %}selected{% endif %}>Otro</option>
+                        </select>
+                    </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Sobre Mí</h2>
+                <div class="form-group">
+                    <label for="biografia">Biografía</label>
+                    <textarea id="biografia" name="biografia" disabled rows="4">{{ perfil.biografia }}</textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Redes Sociales</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="facebook">
+                            <i class="fab fa-facebook"></i> Facebook
+                        </label>
+                        <input type="url" id="facebook" name="facebook" disabled value="{{ perfil.redes_sociales.facebook }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="twitter">
+                            <i class="fab fa-twitter"></i> Twitter
+                        </label>
+                        <input type="url" id="twitter" name="twitter" disabled value="{{ perfil.redes_sociales.twitter }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="instagram">
+                            <i class="fab fa-instagram"></i> Instagram
+                        </label>
+                        <input type="url" id="instagram" name="instagram" disabled value="{{ perfil.redes_sociales.instagram }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedin">
+                            <i class="fab fa-linkedin"></i> LinkedIn
+                        </label>
+                        <input type="url" id="linkedin" name="linkedin"disabled value="{{ perfil.redes_sociales.linkedin }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-guardar">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function mostrarVistaPrevia(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.querySelector('.perfil-foto').src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+  <script>
+    const inputs = document.querySelectorAll('input');
+    const toggleBtn = document.getElementById('toggleBtn');
+    let bloqueado = false;
+
+    toggleBtn.addEventListener('click', () => {
+      bloqueado = !bloqueado;
+      inputs.forEach(el => el.disabled = bloqueado);
+      toggleBtn.textContent = bloqueado ? 'Editar' : 'No editar';
+    });
+  </script>
+{% endblock %}

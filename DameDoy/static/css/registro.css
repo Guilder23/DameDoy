@@ -1,0 +1,90 @@
+.registro-container {
+    max-width: 400px;
+    margin: var(--espaciado-xl) auto;
+    padding: var(--espaciado-lg);
+    background-color: var(--fondo-secundario);
+    border-radius: var(--radio-borde-lg);
+    box-shadow: var(--sombra-md);
+}
+
+.registro-container h2 {
+    color: var(--texto-primario);
+    margin-bottom: var(--espaciado-lg);
+    text-align: center;
+    font-size: var(--tamaño-texto-2xl);
+    font-weight: var(--peso-negrita);
+}
+
+.form-group {
+    margin-bottom: var(--espaciado-md);
+}
+
+.form-group input {
+    width: 100%;
+    padding: var(--espaciado-sm);
+    border: var(--borde-fino) var(--estilo-borde) var(--borde-claro);
+    border-radius: var(--radio-borde-sm);
+    background-color: var(--fondo-primario);
+    color: var(--texto-primario);
+    font-size: var(--tamaño-texto-md);
+    transition: var(--transicion-normal);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-sm);
+}
+
+.form-group input::placeholder {
+    color: var(--texto-placeholder);
+}
+
+.registro-container button {
+    width: 100%;
+    padding: var(--espaciado-sm);
+    background-color: var(--color-primario);
+    color: var(--fondo-primario);
+    border: none;
+    border-radius: var(--radio-borde-sm);
+    font-size: var(--tamaño-texto-md);
+    font-weight: var(--peso-medio);
+    cursor: pointer;
+    transition: var(--transicion-normal);
+}
+
+.registro-container button:hover {
+    background-color: var(--color-primario-hover);
+}
+
+.registro-container p {
+    margin-top: var(--espaciado-md);
+    text-align: center;
+    color: var(--texto-secundario);
+    font-size: var(--tamaño-texto-sm);
+}
+
+.registro-container a {
+    color: var(--color-primario);
+    text-decoration: none;
+    font-weight: var(--peso-medio);
+    transition: var(--transicion-rapida);
+}
+
+.registro-container a:hover {
+    color: var(--color-primario-hover);
+    text-decoration: underline;
+}
+
+/* Mensajes específicos del registro */
+.registro-container .messages {
+    margin-bottom: var(--espaciado-md);
+}
+
+.registro-container .message {
+    padding: var(--espaciado-sm);
+    margin-bottom: var(--espaciado-xs);
+    border-radius: var(--radio-borde-sm);
+    font-size: var(--tamaño-texto-sm);
+    font-weight: var(--peso-medio);
+}

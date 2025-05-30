@@ -11,41 +11,87 @@
     {% block styles %}{% endblock %}
 </head>
 <body>
-    <header>
+    <!-- Header principal -->
+    <header class="main-header">
         <div class="container">
-            <nav>
+            <nav class="main-nav">
                 <div class="nav-left">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'inicio' %}">Inicio</a>
-                        <a href="{% url 'lista_materiales' %}">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'lista_materiales' %}" class="{% if request.resolver_match.url_name == 'lista_materiales' %}active{% endif %}">
                             <i class="fas fa-book"></i> Materiales
                         </a>
-                        <a href="{% url 'publicar_material' %}">
-                            <i class="fas fa-upload"></i> Publicar
-                        </a>
-                        <a href="{% url 'logout' %}">
-                            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-                        </a>
-                    {% else %}
-                        <a href="{% url 'lista_materiales' %}">
-                            <i class="fas fa-book"></i> Materiales
-                        </a>
-                        <a href="{% url 'login' %}">
+                        <a href="{% url 'login' %}" class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">
                             <i class="fas fa-sign-in-alt"></i> Iniciar sesión
                         </a>
-                        <a href="{% url 'registro' %}">
+                        <a href="{% url 'registro' %}" class="{% if request.resolver_match.url_name == 'registro' %}active{% endif %}">
                             <i class="fas fa-user-plus"></i> Registrarse
                         </a>
                     {% endif %}
                 </div>
-                <button class="theme-toggle" onclick="toggleTheme()">
-                    <i class="fas fa-sun" id="theme-icon"></i>
-                </button>
+                
+                <div class="nav-right">
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-sun" id="theme-icon"></i>
+                    </button>
+                    
+                    {% if user.is_authenticated %}
+                        <span class="user-greeting">Hola, {{ user.username }}!</span>
+                    {% else %}
+                        <span class="user-greeting">Bienvenido, visitante!</span>
+                    {% endif %}
+                </div>
             </nav>
         </div>
     </header>
 
-    <main class="container">
+    {% if user.is_authenticated %}
+    <!-- Sidebar derecho -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul>
+                <li>
+                    <a href="{% url 'inicio' %}" class="sidebar-link {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
+                        <i class="fas fa-home"></i>
+                        <span class="sidebar-text">Inicio</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'lista_materiales' %}" class="sidebar-link {% if request.resolver_match.url_name == 'lista_materiales' %}active{% endif %}">
+                        <i class="fas fa-book"></i>
+                        <span class="sidebar-text">Materiales</span>
+                    </a>
+                <li>
+                    <a href="{% url 'publicar_material' %}" class="sidebar-link {% if request.resolver_match.url_name == 'publicar_material' %}active{% endif %}">
+                        <i class="fas fa-upload"></i>
+                        <span class="sidebar-text">Publicar</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'perfil_usuario' %}" class="sidebar-link {% if request.resolver_match.url_name == 'perfil_usuario' %}active{% endif %}">
+                        <i class="fas fa-user "></i>
+                        <span class="sidebar-text">Perfil</span>
+                    </a>
+                </li>
+                <li class="sidebar-divider"></li>
+                <li>
+                    <a href="{% url 'logout' %}" class="sidebar-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="sidebar-text">Cerrar sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+    {% endif %}
+
+    <!-- Contenido principal -->
+    <main class="content {% if user.is_authenticated %}with-sidebar{% endif %}">
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
@@ -67,5 +113,17 @@
 
     <script src="{% static 'js/theme.js' %}"></script>
     {% block scripts %}{% endblock %}
+    <script>
+        // Control del sidebar
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('collapsed');
+                document.querySelector('.content').classList.toggle('expanded');
+                this.querySelector('i').classList.toggle('fa-chevron-right');
+                this.querySelector('i').classList.toggle('fa-chevron-left');
+            });
+        }
+    </script>
 </body>
 </html>
