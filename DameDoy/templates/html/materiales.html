@@ -21,70 +21,72 @@
         </div>
 
         <!-- Panel de filtros horizontal -->
-        <div class="filtros-horizontales">
+        <div class="filtros-container">
             <form method="get" class="filtros-form">
                 {% if request.GET.q %}
                 <input type="hidden" name="q" value="{{ request.GET.q }}">
                 {% endif %}
 
-                <div class="filtros-grid">
-                    <div class="filtro-grupo">
-                        <label>Tipo</label>
-                        <select name="tipo">
-                            <option value="">Todos</option>
-                            {% for id, nombre in tipos %}
-                            <option value="{{ id }}" {% if filtros_actuales.tipo == id %}selected{% endif %}>
-                                {{ nombre }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                <div class="filtros-flex">
+                    <div class="filtros-grupo-principal">
+                        <div class="filtro-item">
+                            <select name="tipo" class="select-minimal">
+                                <option value="">Tipo de material</option>
+                                {% for id, nombre in tipos %}
+                                <option value="{{ id }}" {% if filtros_actuales.tipo == id %}selected{% endif %}>
+                                    {{ nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-                    <div class="filtro-grupo">
-                        <label>Facultad</label>
-                        <select name="facultad">
-                            <option value="">Todas</option>
-                            {% for facultad in facultades %}
-                            <option value="{{ facultad }}" {% if filtros_actuales.facultad == facultad %}selected{% endif %}>
-                                {{ facultad }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                        <div class="filtro-item">
+                            <select name="facultad" class="select-minimal">
+                                <option value="">Facultad</option>
+                                {% for facultad in facultades %}
+                                <option value="{{ facultad }}" {% if filtros_actuales.facultad == facultad %}selected{% endif %}>
+                                    {{ facultad }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-                    <div class="filtro-grupo">
-                        <label>Carrera</label>
-                        <select name="carrera">
-                            <option value="">Todas</option>
-                            {% for carrera in carreras %}
-                            <option value="{{ carrera }}" {% if filtros_actuales.carrera == carrera %}selected{% endif %}>
-                                {{ carrera }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="filtro-grupo precio-range">
-                        <label>Precio</label>
-                        <div class="rango-inputs">
-                            <input type="number" name="precio_min" placeholder="Mín" value="{{ filtros_actuales.precio_min }}">
-                            <input type="number" name="precio_max" placeholder="Máx" value="{{ filtros_actuales.precio_max }}">
+                        <div class="filtro-item">
+                            <select name="carrera" class="select-minimal">
+                                <option value="">Carrera</option>
+                                {% for carrera in carreras %}
+                                <option value="{{ carrera }}" {% if filtros_actuales.carrera == carrera %}selected{% endif %}>
+                                    {{ carrera }}
+                                </option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
 
-                    <div class="filtro-grupo">
-                        <label>Ordenar</label>
-                        <select name="orden">
-                            <option value="-fecha_publicacion" {% if filtros_actuales.orden == '-fecha_publicacion' %}selected{% endif %}>Más recientes</option>
-                            <option value="precio" {% if filtros_actuales.orden == 'precio' %}selected{% endif %}>Menor precio</option>
-                            <option value="-precio" {% if filtros_actuales.orden == '-precio' %}selected{% endif %}>Mayor precio</option>
-                        </select>
-                    </div>
-                </div>
+                    <div class="filtros-grupo-secundario">
+                        <div class="filtro-precio">
+                            <input type="number" name="precio_min" placeholder="$ Min" value="{{ filtros_actuales.precio_min }}" class="input-minimal">
+                            <span class="separador">-</span>
+                            <input type="number" name="precio_max" placeholder="$ Max" value="{{ filtros_actuales.precio_max }}" class="input-minimal">
+                        </div>
 
-                <div class="filtros-acciones">
-                    <button type="submit" class="btn-aplicar">Aplicar</button>
-                    <a href="{% url 'lista_materiales' %}" class="btn-limpiar">Limpiar</a>
+                        <div class="filtro-ordenar">
+                            <select name="orden" class="select-minimal">
+                                <option value="-fecha_publicacion" {% if filtros_actuales.orden == '-fecha_publicacion' %}selected{% endif %}>Más recientes</option>
+                                <option value="precio" {% if filtros_actuales.orden == 'precio' %}selected{% endif %}>Menor precio</option>
+                                <option value="-precio" {% if filtros_actuales.orden == '-precio' %}selected{% endif %}>Mayor precio</option>
+                            </select>
+                        </div>
+
+                        <div class="filtros-botones">
+                            <button type="submit" class="btn-filtrar">
+                                <i class="fas fa-filter"></i> Filtrar
+                            </button>
+                            <a href="{% url 'lista_materiales' %}" class="btn-limpiar">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
