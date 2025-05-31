@@ -41,6 +41,18 @@ main {
     --color-advertencia: #facc15;
     --color-info: #3b82f6;
 
+    
+    /*Estado de material*/
+    --color-borrador: #f1c40f;     /* amarillo vibrante (warning) */
+    --color-pendiente: #2980b9;    /* azul medio (info) */
+    --color-publicado: #27ae60;    /* verde claro (success) */
+    --color-rechazado: #c0392b;    /* rojo oscuro (error) */
+    --color-archivado: #7f8c8d;    /* gris azulado (secundario) */
+    --color-eliminado: #c0392b;    /* rojo oscuro (error) */
+    --color-suspendido: #f1c40f;   /* amarillo vibrante (warning) */
+    --color-vendido:#8e44ad;       /* verde claro (success) */
+
+
     /* 🌫 Sombras */
     --sombra-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
     --sombra-md: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -153,6 +165,16 @@ main {
     --color-error: #ef4444;
     --color-advertencia: #facc15;
     --color-info: #3b82f6;
+
+    /*Estado del material*/
+    --color-borrador: #d4ac0d;     /* amarillo oscuro */
+    --color-pendiente: #1f618d;    /* azul oscuro */
+    --color-publicado: #229954;    /* verde oscuro */
+    --color-rechazado: #922b21;    /* rojo oscuro más suave */
+    --color-archivado: #566573;    /* gris oscuro */
+    --color-eliminado: #922b21;    /* rojo oscuro más suave */
+    --color-suspendido: #d4ac0d;   /* amarillo oscuro */
+    --color-vendido: #8e44ad;      /* verde oscuro */
 
     /* 🌫 Sombras */
     --sombra-sm: 0 1px 2px rgba(0, 0, 0, 0.3);

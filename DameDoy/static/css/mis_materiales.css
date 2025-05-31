@@ -1,57 +1,324 @@
+/* Variables específicas */
+:root {
+    --card-height: 400px;
+    --imagen-height: 200px;
+    --transition-hover: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Contenedor principal */
 .mis-materiales-container {
     padding: var(--espaciado-lg);
     max-width: 1200px;
     margin: 0 auto;
+    min-height: calc(100vh - 100px);
 }
 
+/* Header de la página */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--espaciado-xl);
+    padding: var(--espaciado-md);
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-lg);
+    box-shadow: var(--sombra-sm);
 }
 
+.page-header h1 {
+    font-size: var(--tamaño-texto-2xl);
+    color: var(--texto-primario);
+    margin: 0;
+    font-weight: var(--peso-bold);
+}
+
+.btn-nuevo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-primario);
+    color: white;
+    border-radius: var(--radio-borde-md);
+    text-decoration: none;
+    font-weight: var(--peso-medio);
+    transition: var(--transition-hover);
+}
+
+.btn-nuevo:hover {
+    background: var(--color-primario-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-md);
+}
+
+/* Grid de materiales */
 .materiales-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: var(--espaciado-lg);
 }
 
+/* Tarjeta de material */
 .material-card {
+    height: var(--card-height);
     background: var(--fondo-primario);
     border-radius: var(--radio-borde-lg);
-    box-shadow: var(--sombra-md);
+    box-shadow: var(--sombra-sm);
     overflow: hidden;
-    transition: transform var(--transicion-normal);
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition-hover);
     position: relative;
 }
 
 .material-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
+    box-shadow: var(--sombra-lg);
 }
 
-.material-estado {
+/* Estado del material */
+.estado {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
 }
 
-.estado-badge {
+.estado {
     padding: 4px 8px;
     border-radius: var(--radio-borde-sm);
     font-size: var(--tamaño-texto-sm);
     font-weight: var(--peso-medio);
     color: white;
+    box-shadow: var(--sombra-sm);
+    backdrop-filter: blur(5px);
 }
 
-.borrador .estado-badge { background: var(--color-warning); }
-.pendiente .estado-badge { background: var(--color-info); }
-.publicado .estado-badge { background: var(--color-success); }
-.rechazado .estado-badge { background: var(--color-error); }
-.archivado .estado-badge { background: var(--color-secundario); }
-.eliminado .estado-badge { background: var(--color-error); }
-.suspendido .estado-badge { background: var(--color-warning); }
-.vendido .estado-badge { background: var(--color-success); }
+.estado-borrador { background: var(--color-borrador); }
+.estado-pendiente { background: var(--color-pendiente); }
+.estado-publicado { background: var(--color-publicado); }
+.estado-rechazado { background: var(--color-rechazado); }
+.estado-archivado { background: var(--color-archivado); }
+.estado-eliminado { background: var(--color-eliminado); }
+.estado-suspendido { background: var(--color-suspendido); }
+.estado-vendido { background: var(--color-vendido); }
 
-/* ...más estilos según necesites... */
+
+/* Imagen del material */
+.material-imagen,
+.material-imagen-placeholder {
+    width: 100%;
+    height: var(--imagen-height);
+    object-fit: cover;
+    background: var(--fondo-secundario);
+    transition: transform 0.3s ease;
+}
+
+.material-card:hover .material-imagen {
+    transform: scale(1.05);
+}
+
+.material-imagen-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--texto-secundario);
+    font-size: 3rem;
+}
+
+/* Información del material */
+.material-info {
+    padding: var(--espaciado-lg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-sm);
+}
+
+.material-info h3 {
+    margin: 0;
+    font-size: var(--tamaño-texto-lg);
+    color: var(--texto-primario);
+    font-weight: var(--peso-bold);
+    line-height: 1.4;
+}
+
+.material-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espaciado-md);
+    color: var(--texto-secundario);
+    font-size: var(--tamaño-texto-sm);
+}
+
+.material-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.material-precio {
+    margin-top: auto;
+    font-weight: var(--peso-medio);
+    color: var(--color-success);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Acciones del material */
+.material-acciones {
+    padding: var(--espaciado-md);
+    border-top: 1px solid var(--borde-claro);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--espaciado-md);
+    background: var(--fondo-secundario);
+}
+
+.estado-select {
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border: 1px solid var(--borde-claro);
+    border-radius: var(--radio-borde-md);
+    background-color: var(--fondo-primario);
+    color: var(--texto-primario);
+    font-size: var(--tamaño-texto-sm);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.estado-select:hover,
+.estado-select:focus {
+    border-color: var(--color-primario);
+    outline: none;
+}
+
+.botones-accion {
+    display: flex;
+    gap: var(--espaciado-sm);
+}
+
+.btn-editar,
+.btn-eliminar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radio-borde-md);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: var(--transition-hover);
+}
+
+.btn-editar {
+    background: var(--color-info);
+}
+
+.btn-eliminar {
+    background: var(--color-error);
+}
+
+.btn-editar:hover,
+.btn-eliminar:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-sm);
+}
+
+/* Mensaje de no materiales */
+.no-materiales {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--espaciado-xl);
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-lg);
+    box-shadow: var(--sombra-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--espaciado-md);
+}
+
+.no-materiales i {
+    font-size: 4rem;
+    color: var(--texto-secundario);
+}
+
+.no-materiales p {
+    color: var(--texto-secundario);
+    font-size: var(--tamaño-texto-lg);
+    margin: 0;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.material-card {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mis-materiales-container {
+        padding: var(--espaciado-md);
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: var(--espaciado-md);
+        text-align: center;
+        padding: var(--espaciado-md);
+    }
+
+    .materiales-grid {
+        grid-template-columns: 1fr;
+        gap: var(--espaciado-md);
+    }
+
+    .material-card {
+        height: auto;
+        min-height: var(--card-height);
+    }
+
+    .material-acciones {
+        flex-direction: column;
+        gap: var(--espaciado-md);
+    }
+
+    .estado-select {
+        width: 100%;
+    }
+
+    .botones-accion {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+    .material-card {
+        background: var(--fondo-secundario);
+    }
+
+    .estado-select {
+        background-color: var(--fondo-secundario);
+    }
+}

@@ -11,7 +11,9 @@
 <div class="formulario-container">
     <div class="formulario-header">
         <h1>Editar Material</h1>
-        <span class="estado-badge {{ material.estado }}">{{ material.get_estado_display }}</span>
+        <div class="material-estado {{ material.estado }}">
+                <span class="estado estado-{{ material.estado|lower }}">{{ material.get_estado_display }}</span>
+        </div>
     </div>
 
     <form method="POST" enctype="multipart/form-data" class="formulario-material">

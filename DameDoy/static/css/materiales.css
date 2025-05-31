@@ -229,6 +229,35 @@
   font-size: var(--tamaño-texto-xs);
   margin-bottom: var(--espaciado-sm);
 }
+.estado {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: var(--tamaño-texto-xs);
+  border-radius: 999px; /* estilo pill */
+  font-weight: 600;
+  line-height: 1;
+  background-color: #eee; /* color base neutro por si falta clase */
+  color: #333;
+  margin-bottom: var(--espaciado-sm);
+  text-transform: capitalize;
+}
+
+/* Etiquetas de color según el estado */
+
+.estado-publicado {
+  color: var(--color-publicado);
+  border-color: var(--color-publicado);
+  background-color: rgba(39, 174, 96, 0.15);
+}
+
+.estado-vendido {
+  color: var(--color-vendido); /* ej: #8e44ad */
+  border-color: var(--color-vendido);
+  background-color: rgba(142, 68, 173, 0.15);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: var(--color-vendido);
+}
 
 .descripcion {
   color: var(--texto-secundario);

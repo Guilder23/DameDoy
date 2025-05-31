@@ -135,23 +135,72 @@
     background: var(--color-primario-hover);
 }
 
-/* Badges de estado */
-.estado-badge {
-    padding: 0.5rem 1rem;
-    border-radius: var(--radio-borde-lg);
-    font-size: var(--tamaño-texto-sm);
-    font-weight: var(--peso-medio);
-    color: white;
+/* Estado del material */
+
+.estado {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--radio-borde-sm, 8px);
+  font-size: var(--tamaño-texto-sm, 0.875rem);
+  font-weight: var(--peso-medio, 600);
+  color: inherit; /* para que cada estado defina el color */
+  background-color: transparent;
+  border: 2.5px solid transparent; /* se definirá en cada estado */
+  box-shadow: none;
+  user-select: none;
+  cursor: default;
+  white-space: nowrap;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.estado-badge.borrador { background: var(--color-warning); }
-.estado-badge.pendiente { background: var(--color-info); }
-.estado-badge.publicado { background: var(--color-success); }
-.estado-badge.rechazado { background: var(--color-error); }
-.estado-badge.archivado { background: var(--color-secundario); }
-.estado-badge.eliminado { background: var(--color-error); }
-.estado-badge.suspendido { background: var(--color-warning); }
-.estado-badge.vendido { background: var(--color-success); }
+.estado-borrador {
+  color: var(--color-borrador);
+  border-color: var(--color-borrador);
+  background-color: rgba(241, 196, 15, 0.15);
+}
+
+.estado-pendiente {
+  color: var(--color-pendiente);
+  border-color: var(--color-pendiente);
+  background-color: rgba(41, 128, 185, 0.15);
+}
+
+.estado-publicado {
+  color: var(--color-publicado);
+  border-color: var(--color-publicado);
+  background-color: rgba(39, 174, 96, 0.15);
+}
+
+.estado-rechazado {
+  color: var(--color-rechazado);
+  border-color: var(--color-rechazado);
+  background-color: rgba(192, 57, 43, 0.15);
+}
+
+.estado-archivado {
+  color: var(--color-archivado);
+  border-color: var(--color-archivado);
+  background-color: rgba(127, 140, 141, 0.15);
+}
+
+.estado-eliminado {
+  color: var(--color-eliminado);
+  border-color: var(--color-eliminado);
+  background-color: rgba(192, 57, 43, 0.15);
+}
+
+.estado-suspendido {
+  color: var(--color-suspendido);
+  border-color: var(--color-suspendido);
+  background-color: rgba(241, 196, 15, 0.15);
+}
+
+.estado-vendido {
+  color: var(--color-vendido);
+  border-color: var(--color-vendido);
+  background-color: rgba(39, 174, 96, 0.15);
+}
+
 
 /* Botones de acción */
 .form-actions {

@@ -4,7 +4,7 @@
 {% block title %}Mis Materiales{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/editar_material.css' %}">
+<link rel="stylesheet" href="{% static 'css/mis_materiales.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -20,7 +20,7 @@
         {% for material in materiales %}
         <div class="material-card">
             <div class="material-estado {{ material.estado }}">
-                <span class="estado-badge">{{ material.get_estado_display }}</span>
+                <span class="estado estado-{{ material.estado|lower }}">{{ material.get_estado_display }}</span>
             </div>
             
             {% if material.imagen %}
@@ -47,7 +47,7 @@
             </div>
 
             <div class="material-acciones">
-                <select class="estado-select" onchange="cambiarEstado(this, {{ material.id }})">
+                <select class="estado-select" onchange="cambiarEstado(this, '{{ material.id }}')">
                     {% for value, label in estados %}
                     <option value="{{ value }}" {% if material.estado == value %}selected{% endif %}>
                         {{ label }}
@@ -59,7 +59,7 @@
                     <a href="{% url 'editar_material' material.pk %}" class="btn-editar">
                         <i class="fas fa-edit"></i>
                     </a>
-                    <button onclick="eliminarMaterial({{ material.id }})" class="btn-eliminar">
+                    <button onclick="eliminarMaterial('{{ material.id }}')" class="btn-eliminar">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -78,27 +78,34 @@
 
 {% block scripts %}
 <script>
-function cambiarEstado(select, materialId) {
-    fetch(`/html/material/${materialId}/estado/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: `estado=${select.value}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        }
-    });
-}
-
-function eliminarMaterial(materialId) {
-    if (confirm('¿Estás seguro de que deseas eliminar este material?')) {
-        window.location.href = `/html/material/${materialId}/eliminar/`;
+    // Función para cambiar el estado del material
+    function cambiarEstado(select, materialId) {
+        fetch(`/html/material/${materialId}/estado/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `estado=${encodeURIComponent(select.value)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert("Hubo un error al actualizar el estado.");
+            }
+        })
+        .catch(error => {
+            console.error("Error al cambiar estado:", error);
+        });
     }
-}
+
+    // Función para eliminar un material
+    function eliminarMaterial(materialId) {
+        if (confirm('¿Estás seguro de que deseas eliminar este material?')) {
+            window.location.href = `/html/material/${materialId}/eliminar/`;
+        }
+    }
 </script>
 {% endblock %}
