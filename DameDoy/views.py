@@ -70,9 +70,10 @@ def publicar_material(request):
         if form.is_valid():
             material = form.save(commit=False)
             material.autor = request.user
+            material.estado = 'pendiente'  # Establecer estado inicial como pendiente
             material.save()
-            messages.success(request, f'¡Material publicado exitosamente...! {material.titulo}')
-            return redirect('lista_materiales')
+            messages.success(request, f'¡Material enviado para revisión! {material.titulo}')
+            return redirect('mis_materiales')  # Redirigir a mis materiales para ver el estado
     else:
         form = MaterialForm()
     
@@ -221,6 +222,7 @@ def cambiar_estado_material(request, pk):
         if nuevo_estado in dict(Material.ESTADO_CHOICES):
             material.estado = nuevo_estado
             material.save()
+            messages.success(request, 'Estado de Material actualizado exitosamente')
             return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
