@@ -1,0 +1,44 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Eliminar Material{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/confirmar_eliminar_material.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="confirmar-container">
+    <div class="confirmar-card">
+        <div class="confirmar-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h1>¿Eliminar Material?</h1>
+        </div>
+
+        <div class="material-info">
+            <h2>{{ material.titulo }}</h2>
+            <p class="material-meta">
+                <span><i class="fas fa-graduation-cap"></i> {{ material.materia }}</span>
+                <span><i class="fas fa-building"></i> {{ material.facultad }}</span>
+            </p>
+        </div>
+
+        <p class="advertencia">
+            Esta acción cambiará el estado del material a "Eliminado". 
+            El material no será visible para otros usuarios pero se mantendrá en tu historial.
+        </p>
+
+        <div class="confirmar-acciones">
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn-eliminar">
+                    <i class="fas fa-trash"></i> Sí, eliminar material
+                </button>
+            </form>
+            <a href="{% url 'mis_materiales' %}" class="btn-cancelar">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Editar Material{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/editar_material.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="formulario-container">
+    <div class="formulario-header">
+        <h1>Editar Material</h1>
+        <span class="estado-badge {{ material.estado }}">{{ material.get_estado_display }}</span>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="formulario-material">
+        {% csrf_token %}
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="{{ form.titulo.id_for_label }}">Título</label>
+                {{ form.titulo }}
+                {% if form.titulo.errors %}
+                <span class="error-text">{{ form.titulo.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.tipo.id_for_label }}">Tipo de Material</label>
+                {{ form.tipo }}
+                {% if form.tipo.errors %}
+                <span class="error-text">{{ form.tipo.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.facultad.id_for_label }}">Facultad</label>
+                {{ form.facultad }}
+                {% if form.facultad.errors %}
+                <span class="error-text">{{ form.facultad.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.carrera.id_for_label }}">Carrera</label>
+                {{ form.carrera }}
+                {% if form.carrera.errors %}
+                <span class="error-text">{{ form.carrera.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.materia.id_for_label }}">Materia</label>
+                {{ form.materia }}
+                {% if form.materia.errors %}
+                <span class="error-text">{{ form.materia.errors.0 }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.docente.id_for_label }}">Estado</label>
+                {{ form.docente }}
+                {% if form.docente.errors %}
+                <span class="error-text">{{ form.docente.errors.0 }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.precio.id_for_label }}">Precio</label>
+                {{ form.precio }}
+                {% if form.precio.errors %}
+                <span class="error-text">{{ form.precio.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group full-width">
+            <label for="{{ form.descripcion.id_for_label }}">Descripción</label>
+            {{ form.descripcion }}
+            {% if form.descripcion.errors %}
+            <span class="error-text">{{ form.descripcion.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-group imagen-grupo">
+            <label for="{{ form.imagen.id_for_label }}">Imagen del Material</label>
+            {% if material.imagen %}
+            <div class="imagen-actual">
+                <img src="{{ material.imagen.url }}" alt="Imagen actual">
+                <p>Imagen actual</p>
+            </div>
+            {% endif %}
+            {{ form.imagen }}
+            {% if form.imagen.errors %}
+            <span class="error-text">{{ form.imagen.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-guardar">
+                <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+            <a href="{% url 'mis_materiales' %}" class="btn-cancelar">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Preview de imagen
+    const inputImagen = document.querySelector('input[type="file"]');
+    const previewContainer = document.querySelector('.imagen-grupo');
+    
+    inputImagen.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.createElement('div');
+                preview.className = 'imagen-actual';
+                preview.innerHTML = `
+                    <img src="${e.target.result}" alt="Vista previa">
+                    <p>Vista previa</p>
+                `;
+                
+                const oldPreview = previewContainer.querySelector('.imagen-actual');
+                if (oldPreview) {
+                    oldPreview.remove();
+                }
+                
+                previewContainer.insertBefore(preview, inputImagen);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+});
+</script>
+{% endblock %}

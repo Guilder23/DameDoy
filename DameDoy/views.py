@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -81,7 +81,7 @@ def publicar_material(request):
 
 def lista_materiales(request):
     materiales = Material.objects.all()
-    
+    materiales = Material.objects.filter(estado__in=['publicado', 'vendido'])
     # Búsqueda
     query = request.GET.get('q')
     if query:
@@ -183,3 +183,57 @@ def actualizar_imagen(request):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+def mis_materiales(request):
+    materiales = Material.objects.filter(autor=request.user).order_by('-fecha_publicacion')
+    
+    context = {
+        'materiales': materiales,
+        'estados': Material.ESTADO_CHOICES,
+    }
+    return render(request, 'html/mis_materiales.html', context)
+
+@login_required
+def editar_material(request, pk):
+    material = get_object_or_404(Material, pk=pk, autor=request.user)
+    
+    if request.method == 'POST':
+        form = MaterialForm(request.POST, request.FILES, instance=material)
+        if form.is_valid():
+            material = form.save(commit=False)
+            # Si se cambia algo, volver a estado pendiente
+            if material.estado == 'publicado':
+                material.estado = 'pendiente'
+            material.save()
+            messages.success(request, 'Material actualizado exitosamente')
+            return redirect('mis_materiales')
+    else:
+        form = MaterialForm(instance=material)
+    
+    return render(request, 'html/editar_material.html', {'form': form, 'material': material})
+
+@login_required
+def cambiar_estado_material(request, pk):
+    if request.method == 'POST':
+        material = get_object_or_404(Material, pk=pk, autor=request.user)
+        nuevo_estado = request.POST.get('estado')
+        if nuevo_estado in dict(Material.ESTADO_CHOICES):
+            material.estado = nuevo_estado
+            material.save()
+            return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+@login_required
+def eliminar_material(request, pk):
+    material = get_object_or_404(Material, pk=pk, autor=request.user)
+    
+    if request.method == 'POST':
+        material.estado = 'eliminado'
+        material.save()
+        messages.success(request, 'Material eliminado exitosamente')
+        return redirect('mis_materiales')
+    
+    return render(request, 'html/confirmar_eliminar_material.html', {
+        'material': material
+    })

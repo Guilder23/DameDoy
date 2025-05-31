@@ -11,4 +11,9 @@ urlpatterns = [
     path('html/publicar/', views.publicar_material, name='publicar_material'),
     path('html/perfil/', views.perfil_usuario, name='perfil_usuario'),
     path('actualizar-imagen/', views.actualizar_imagen, name='actualizar_imagen'),
+
+    path('html/mis-materiales/', views.mis_materiales, name='mis_materiales'),
+    path('html/material/<int:pk>/editar/', views.editar_material, name='editar_material'),
+    path('html/material/<int:pk>/estado/', views.cambiar_estado_material, name='cambiar_estado_material'),
+    path('html/material/<int:pk>/eliminar/', views.eliminar_material, name='eliminar_material'),
 ]

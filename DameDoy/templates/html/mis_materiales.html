@@ -1,0 +1,104 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Mis Materiales{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/editar_material.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="mis-materiales-container">
+    <header class="page-header">
+        <h1>Mis Materiales</h1>
+        <a href="{% url 'publicar_material' %}" class="btn-nuevo">
+            <i class="fas fa-plus"></i> Nuevo Material
+        </a>
+    </header>
+
+    <div class="materiales-grid">
+        {% for material in materiales %}
+        <div class="material-card">
+            <div class="material-estado {{ material.estado }}">
+                <span class="estado-badge">{{ material.get_estado_display }}</span>
+            </div>
+            
+            {% if material.imagen %}
+            <img src="{{ material.imagen.url }}" alt="{{ material.titulo }}" class="material-imagen">
+            {% else %}
+            <div class="material-imagen-placeholder">
+                <i class="fas fa-book"></i>
+            </div>
+            {% endif %}
+
+            <div class="material-info">
+                <h3>{{ material.titulo }}</h3>
+                <p class="material-meta">
+                    <span><i class="fas fa-graduation-cap"></i> {{ material.materia }}</span>
+                    <span><i class="fas fa-building"></i> {{ material.facultad }}</span>
+                </p>
+                <p class="material-precio">
+                    {% if material.precio %}
+                    <i class="fas fa-tag"></i> ${{ material.precio }}
+                    {% else %}
+                    <i class="fas fa-gift"></i> Gratis
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="material-acciones">
+                <select class="estado-select" onchange="cambiarEstado(this, {{ material.id }})">
+                    {% for value, label in estados %}
+                    <option value="{{ value }}" {% if material.estado == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <div class="botones-accion">
+                    <a href="{% url 'editar_material' material.pk %}" class="btn-editar">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <button onclick="eliminarMaterial({{ material.id }})" class="btn-eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-materiales">
+            <i class="fas fa-folder-open"></i>
+            <p>No has publicado ningún material todavía</p>
+            <a href="{% url 'publicar_material' %}" class="btn-nuevo">Publicar mi primer material</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function cambiarEstado(select, materialId) {
+    fetch(`/html/material/${materialId}/estado/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: `estado=${select.value}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+
+function eliminarMaterial(materialId) {
+    if (confirm('¿Estás seguro de que deseas eliminar este material?')) {
+        window.location.href = `/html/material/${materialId}/eliminar/`;
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,57 @@
+.mis-materiales-container {
+    padding: var(--espaciado-lg);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--espaciado-xl);
+}
+
+.materiales-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--espaciado-lg);
+}
+
+.material-card {
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-lg);
+    box-shadow: var(--sombra-md);
+    overflow: hidden;
+    transition: transform var(--transicion-normal);
+    position: relative;
+}
+
+.material-card:hover {
+    transform: translateY(-4px);
+}
+
+.material-estado {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+}
+
+.estado-badge {
+    padding: 4px 8px;
+    border-radius: var(--radio-borde-sm);
+    font-size: var(--tamaño-texto-sm);
+    font-weight: var(--peso-medio);
+    color: white;
+}
+
+.borrador .estado-badge { background: var(--color-warning); }
+.pendiente .estado-badge { background: var(--color-info); }
+.publicado .estado-badge { background: var(--color-success); }
+.rechazado .estado-badge { background: var(--color-error); }
+.archivado .estado-badge { background: var(--color-secundario); }
+.eliminado .estado-badge { background: var(--color-error); }
+.suspendido .estado-badge { background: var(--color-warning); }
+.vendido .estado-badge { background: var(--color-success); }
+
+/* ...más estilos según necesites... */

@@ -12,6 +12,17 @@ class Material(models.Model):
         ('otros', 'Otros'),
     ]
 
+    ESTADO_CHOICES = [
+        ('borrador', 'Borrador'),
+        ('pendiente', 'Pendiente de revisión'),
+        ('publicado', 'Publicado'),
+        ('rechazado', 'Rechazado'),
+        ('archivado', 'Archivado'),
+        ('eliminado', 'Eliminado'),
+        ('suspendido', 'Suspendido'),
+        ('vendido', 'Vendido/No disponible'),
+    ]
+
     titulo = models.CharField(max_length=200, verbose_name="Título", null=True, blank=True)
     tipo = models.CharField(max_length=50, choices=TIPO_MATERIAL, verbose_name="Tipo de Material", null=True, blank=True)
     facultad = models.CharField(max_length=100, verbose_name="Facultad", null=True, blank=True)
@@ -23,6 +34,21 @@ class Material(models.Model):
     fecha_publicacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Publicación")
     autor = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Autor")
     imagen = models.ImageField(upload_to='materiales/', null=True, blank=True, verbose_name="Imagen (opcional)")
+    estado = models.CharField(
+        max_length=20, 
+        choices=ESTADO_CHOICES,
+        default='borrador',
+        verbose_name="Estado"
+    )
+    motivo_rechazo = models.TextField(
+        null=True, 
+        blank=True,
+        verbose_name="Motivo de rechazo"
+    )
+    fecha_ultima_modificacion = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Última modificación"
+    )
 
     class Meta:
         ordering = ['-fecha_publicacion']

@@ -1,0 +1,109 @@
+.confirmar-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--espaciado-xl);
+}
+
+.confirmar-card {
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-lg);
+    box-shadow: var(--sombra-md);
+    padding: var(--espaciado-xl);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+.confirmar-header {
+    margin-bottom: var(--espaciado-lg);
+}
+
+.confirmar-header i {
+    font-size: 3rem;
+    color: var(--color-error);
+    margin-bottom: var(--espaciado-md);
+}
+
+.confirmar-header h1 {
+    color: var(--texto-primario);
+    font-size: var(--tamaño-texto-xl);
+    margin: 0;
+}
+
+.material-info {
+    margin: var(--espaciado-lg) 0;
+    padding: var(--espaciado-md);
+    background: var(--fondo-secundario);
+    border-radius: var(--radio-borde-md);
+}
+
+.material-info h2 {
+    color: var(--texto-primario);
+    font-size: var(--tamaño-texto-lg);
+    margin: 0 0 var(--espaciado-sm);
+}
+
+.material-meta {
+    display: flex;
+    gap: var(--espaciado-md);
+    justify-content: center;
+    color: var(--texto-secundario);
+    font-size: var(--tamaño-texto-sm);
+}
+
+.advertencia {
+    color: var(--texto-secundario);
+    margin: var(--espaciado-lg) 0;
+    font-size: var(--tamaño-texto-md);
+}
+
+.confirmar-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-md);
+    margin-top: var(--espaciado-xl);
+}
+
+.btn-eliminar,
+.btn-cancelar {
+    width: 100%;
+    padding: var(--espaciado-md);
+    border-radius: var(--radio-borde-md);
+    font-weight: var(--peso-medio);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--espaciado-sm);
+    transition: all var(--transicion-normal);
+}
+
+.btn-eliminar {
+    background: var(--color-error);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-eliminar:hover {
+    background: var(--color-error-hover);
+    transform: translateY(-2px);
+}
+
+.btn-cancelar {
+    background: var(--fondo-terciario);
+    color: var(--texto-secundario);
+    text-decoration: none;
+}
+
+.btn-cancelar:hover {
+    background: var(--fondo-hover);
+    color: var(--texto-primario);
+}
+
+@media (max-width: 768px) {
+    .confirmar-container {
+        padding: var(--espaciado-md);
+    }
+}
