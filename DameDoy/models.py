@@ -87,3 +87,48 @@ class PerfilUsuario(models.Model):
 def crear_perfil_usuario(sender, instance, created, **kwargs):
     if created:
         PerfilUsuario.objects.create(usuario=instance)
+
+class CarritoItem(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, on_delete=models.CASCADE)
+    fecha_agregado = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-fecha_agregado']
+        unique_together = ['usuario', 'material']
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.material.titulo}"
+
+class Compra(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente de pago'),
+        ('pagado', 'Pagado y en revisión'),
+        ('confirmado', 'Pago confirmado'),
+        ('rechazado', 'Pago rechazado'),
+        ('cancelado', 'Compra cancelada')
+    ]
+
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='compras')
+    materiales = models.ManyToManyField(Material, through='DetalleCompra')
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+    comprobante = models.ImageField(upload_to='comprobantes/', null=True, blank=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_pago = models.DateTimeField(null=True, blank=True)
+    fecha_confirmacion = models.DateTimeField(null=True, blank=True)
+    motivo_rechazo = models.TextField(null=True, blank=True)
+    codigo_seguimiento = models.CharField(max_length=50, unique=True, null=True)
+
+    def __str__(self):
+        return f"Compra #{self.id} - {self.usuario.username}"
+
+class DetalleCompra(models.Model):
+    compra = models.ForeignKey(Compra, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, on_delete=models.CASCADE)
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha_agregado = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-fecha_agregado']
+

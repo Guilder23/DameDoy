@@ -1,0 +1,144 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Finalizar Compra{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/compra.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="compra-container">
+    <h1>Finalizar Compra</h1>
+
+    <div class="compra-grid">
+        <!-- Lista de items -->
+        <div class="items-section">
+            <h2>Materiales en tu carrito</h2>
+            {% for item in items %}
+            <div class="compra-item">
+                <img src="{{ item.material.imagen.url }}" alt="{{ item.material.titulo }}">
+                <div class="item-info">
+                    <h3>{{ item.material.titulo }}</h3>
+                    <p class="item-details">
+                        <span class="facultad">{{ item.material.facultad }}</span>
+                        <span class="carrera">{{ item.material.carrera }}</span>
+                    </p>
+                    <p class="vendedor">
+                        <i class="fas fa-user"></i> 
+                        Vendedor: {{ item.material.autor.get_full_name|default:item.material.autor.username }}
+                    </p>
+                    <p class="precio">${{ item.material.precio }}</p>
+                </div>
+                <button class="btn-eliminar" onclick="eliminarItem({{ item.id }})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Sección de pago -->
+        <div class="pago-section">
+            <div class="resumen-compra">
+                <h2>Resumen de la compra</h2>
+                <div class="total">
+                    <span>Total a pagar:</span>
+                    <span class="precio-total">${{ total }}</span>
+                </div>
+            </div>
+
+            <div class="metodo-pago">
+                <h2>Método de pago</h2>
+                <button class="btn-mostrar-qr" onclick="mostrarQR()">
+                    <i class="fas fa-qrcode"></i> Mostrar QR de pago
+                </button>
+                
+                <div id="qrModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h3>Escanea para pagar</h3>
+                        <img src="{% static 'img/qr-pago.png' %}" alt="QR de pago" class="qr-imagen">
+                        <p class="instrucciones">
+                            1. Escanea el código QR<br>
+                            2. Realiza el pago<br>
+                            3. Guarda el comprobante<br>
+                            4. Súbelo en el formulario siguiente
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <form method="post" action="{% url 'procesar_compra' %}" enctype="multipart/form-data" class="comprobante-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="comprobante">
+                        <i class="fas fa-upload"></i> 
+                        Subir comprobante de pago
+                    </label>
+                    <input type="file" 
+                           id="comprobante" 
+                           name="comprobante"
+                           accept="image/*"
+                           required>
+                    <div id="preview" class="comprobante-preview"></div>
+                </div>
+
+                <div class="botones-accion">
+                    <button type="submit" class="btn-confirmar">
+                        <i class="fas fa-check"></i> Confirmar compra
+                    </button>
+                    <button type="button" class="btn-cancelar" onclick="cancelarCompra()">
+                        <i class="fas fa-times"></i> Cancelar compra
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function mostrarQR() {
+    const modal = document.getElementById('qrModal');
+    modal.style.display = "block";
+}
+
+document.querySelector('.close').onclick = function() {
+    document.getElementById('qrModal').style.display = "none";
+}
+
+document.getElementById('comprobante').addEventListener('change', function(e) {
+    const preview = document.getElementById('preview');
+    const file = e.target.files[0];
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `
+                <img src="${e.target.result}" alt="Vista previa del comprobante">
+                <span class="filename">${file.name}</span>
+            `;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+function cancelarCompra() {
+    if (confirm('¿Estás seguro de que deseas cancelar la compra?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "cancelar_compra" %}';
+        
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrfmiddlewaretoken';
+        csrfToken.value = '{{ csrf_token }}';
+        
+        form.appendChild(csrfToken);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

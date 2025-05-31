@@ -30,6 +30,23 @@
                 </div>
                 
 <div class="nav-right">
+    {% if user.is_authenticated %}
+    <div class="carrito-container">
+        <button class="carrito-btn" id="carritoBtn">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="carrito-contador" id="carritoContador">0</span>
+        </button>
+        
+        <div class="carrito-dropdown" id="carritoDropdown">
+            <div class="carrito-items" id="carritoItems"></div>
+            <div class="carrito-footer">
+                <a href="{% url 'procesar_compra' %}" class="btn-ver-carrito">
+                    Ver carrito completo
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     <button class="theme-toggle" onclick="toggleTheme()">
         <i class="fas fa-sun" id="theme-icon"></i>
     </button>
@@ -125,6 +142,7 @@
     </footer>
 
     <script src="{% static 'js/theme.js' %}"></script>
+    <script src="{% static 'js/carrito.js' %}"></script>
     {% block scripts %}{% endblock %}
     <script>
         // Control del sidebar

@@ -16,4 +16,13 @@ urlpatterns = [
     path('html/material/<int:pk>/editar/', views.editar_material, name='editar_material'),
     path('html/material/<int:pk>/estado/', views.cambiar_estado_material, name='cambiar_estado_material'),
     path('html/material/<int:pk>/eliminar/', views.eliminar_material, name='eliminar_material'),
+
+    # Agregar a urlpatterns
+    path('carrito/agregar/<int:material_id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
+    path('carrito/obtener/', views.obtener_carrito, name='obtener_carrito'),
+    path('carrito/eliminar/<int:material_id>/', views.eliminar_del_carrito, name='eliminar_del_carrito'),
+
+    path('compra/', views.vista_compra, name='vista_compra'),
+    path('compra/procesar/', views.procesar_compra, name='procesar_compra'),
+    path('compra/cancelar/', views.cancelar_compra, name='cancelar_compra'),
 ]

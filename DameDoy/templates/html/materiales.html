@@ -115,9 +115,14 @@
                 </div>
                 <div class="precio-autor">
                     <span class="precio">$ {{ material.precio }}</span>
-                    <!-- <span class="autor">{{ material.autor.username }}</span> -->
-                    <!-- <span class="autor">{{ material.autor.first_name }}</span> -->
-                    <span class="autor">{{ material.autor.first_name|default:material.autor.username }}</span>
+                    <div class="acciones">
+                        <span class="autor">{{ material.autor.first_name|default:material.autor.username }}</span>
+                        {% if material.estado == 'publicado' and material.autor != user %}
+                        <button class="btn-agregar-carrito" data-material-id="{{ material.id }}" title="Agregar al carrito">
+                            <i class="fas fa-cart-plus"></i>
+                        </button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </article>

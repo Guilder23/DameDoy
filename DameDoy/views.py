@@ -3,12 +3,15 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Material, PerfilUsuario  # Quitamos Facultad
+from .models import Material, PerfilUsuario, CarritoItem, Compra, DetalleCompra  # Quitamos Facultad
 from django.db.models import Q
 from .forms import MaterialForm
 import json
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.utils import timezone
+import uuid
+
 
 @login_required
 def inicio(request):
@@ -239,3 +242,123 @@ def eliminar_material(request, pk):
     return render(request, 'html/confirmar_eliminar_material.html', {
         'material': material
     })
+
+#CARRITO---------------------------------------------------------
+@login_required
+def agregar_al_carrito(request, material_id):
+    material = get_object_or_404(Material, id=material_id, estado='publicado')
+    
+    # Verificar que no sea un material propio
+    if material.autor == request.user:
+        return JsonResponse({
+            'success': False,
+            'message': 'No puedes agregar tus propios materiales al carrito'
+        })
+    
+    # Crear o verificar si ya existe
+    item, created = CarritoItem.objects.get_or_create(
+        usuario=request.user,
+        material=material
+    )
+    
+    if created:
+        return JsonResponse({
+            'success': True,
+            'message': 'Material agregado al carrito',
+            'itemCount': CarritoItem.objects.filter(usuario=request.user).count()
+        })
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'El material ya está en tu carrito'
+        })
+
+@login_required
+def obtener_carrito(request):
+    items = CarritoItem.objects.filter(usuario=request.user)[:3]
+    data = [{
+        'id': item.material.id,
+        'titulo': item.material.titulo,
+        'precio': str(item.material.precio),
+        'imagen': item.material.imagen.url if item.material.imagen else None
+    } for item in items]
+    
+    return JsonResponse({
+        'items': data,
+        'itemCount': CarritoItem.objects.filter(usuario=request.user).count()
+    })
+
+@login_required
+def eliminar_del_carrito(request, material_id):
+    CarritoItem.objects.filter(
+        usuario=request.user,
+        material_id=material_id
+    ).delete()
+    
+    return JsonResponse({
+        'success': True,
+        'itemCount': CarritoItem.objects.filter(usuario=request.user).count()
+    })
+
+@login_required
+def vista_compra(request):
+    items_carrito = CarritoItem.objects.filter(usuario=request.user)
+    if not items_carrito:
+        messages.warning(request, 'Tu carrito está vacío')
+        return redirect('lista_materiales')
+    
+    total = sum(item.material.precio for item in items_carrito)
+    vendedores = set(item.material.autor for item in items_carrito)
+    
+    return render(request, 'html/compra.html', {
+        'items': items_carrito,
+        'total': total,
+        'vendedores': vendedores
+    })
+
+@login_required
+def procesar_compra(request):
+    if request.method == 'POST':
+        items_carrito = CarritoItem.objects.filter(usuario=request.user)
+        if not items_carrito:
+            messages.error(request, 'No hay items en el carrito')
+            return redirect('lista_materiales')
+
+        # Crear la compra
+        compra = Compra.objects.create(
+            usuario=request.user,
+            total=sum(item.material.precio for item in items_carrito),
+            codigo_seguimiento=str(uuid.uuid4().hex[:8].upper())
+        )
+
+        # Crear detalles de compra
+        for item in items_carrito:
+            DetalleCompra.objects.create(
+                compra=compra,
+                material=item.material,
+                precio_unitario=item.material.precio
+            )
+
+        # Procesar comprobante si existe
+        if 'comprobante' in request.FILES:
+            compra.comprobante = request.FILES['comprobante']
+            compra.estado = 'pagado'
+            compra.fecha_pago = timezone.now()
+            compra.save()
+
+        # Limpiar carrito
+        items_carrito.delete()
+
+        messages.success(request, 
+            f'¡Compra realizada con éxito! Tu código de seguimiento es: {compra.codigo_seguimiento}')
+        return redirect('mis_compras')
+
+    return redirect('vista_compra')
+
+@login_required
+def cancelar_compra(request):
+    if request.method == 'POST':
+        items_carrito = CarritoItem.objects.filter(usuario=request.user)
+        items_carrito.delete()
+        messages.info(request, 'Has cancelado tu compra')
+    return redirect('lista_materiales')

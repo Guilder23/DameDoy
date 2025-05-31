@@ -517,6 +517,110 @@ nav {
     margin-left: 50px; /* Cambiado de margin-right a margin-left y reducido a 50px */
 }
 
+/* Estilos del carrito */
+.carrito-container {
+    position: relative;
+}
+
+.carrito-btn {
+    background: none;
+    border: none;
+    color: var(--texto-primario);
+    cursor: pointer;
+    padding: var(--espaciado-xs);
+    position: relative;
+}
+
+.carrito-contador {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--color-primario);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carrito-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-md);
+    box-shadow: var(--sombra-md);
+    display: none;
+    z-index: var(--z-dropdown);
+}
+
+.carrito-dropdown.show {
+    display: block;
+}
+
+.carrito-items {
+    padding: var(--espaciado-md);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.carrito-item {
+    display: flex;
+    gap: var(--espaciado-md);
+    padding: var(--espaciado-sm);
+    border-bottom: 1px solid var(--borde-claro);
+}
+
+.carrito-item:last-child {
+    border-bottom: none;
+}
+
+.carrito-item-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: var(--radio-borde-sm);
+}
+
+.carrito-item-info {
+    flex: 1;
+}
+
+.carrito-item-titulo {
+    font-weight: var(--peso-medio);
+    margin-bottom: var(--espaciado-xs);
+}
+
+.carrito-item-precio {
+    color: var(--color-primario);
+    font-weight: var(--peso-medio);
+}
+
+.carrito-footer {
+    padding: var(--espaciado-md);
+    border-top: 1px solid var(--borde-claro);
+}
+
+.btn-ver-carrito {
+    display: block;
+    width: 100%;
+    padding: var(--espaciado-sm);
+    background: var(--color-primario);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radio-borde-sm);
+    text-align: center;
+    transition: var(--transicion-normal);
+}
+
+.btn-ver-carrito:hover {
+    background: var(--color-primario-hover);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .sidebar {
