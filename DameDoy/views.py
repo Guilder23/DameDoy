@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Material, PerfilUsuario, CarritoItem, Compra, DetalleCompra  # Quitamos Facultad
+from .models import Material, PerfilUsuario, CarritoItem, Compra, DetalleCompra, Notificacion  # Quitamos Facultad
 from django.db.models import Q
 from .forms import MaterialForm
 import json
@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 import uuid
+from django.utils.timesince import timesince
 
 
 @login_required
@@ -331,13 +332,27 @@ def procesar_compra(request):
             codigo_seguimiento=str(uuid.uuid4().hex[:8].upper())
         )
 
-        # Crear detalles de compra
+        # Crear detalles de compra y notificaciones para vendedores
+        vendedores_notificados = set()  # Para evitar notificaciones duplicadas
+        
         for item in items_carrito:
             DetalleCompra.objects.create(
                 compra=compra,
                 material=item.material,
                 precio_unitario=item.material.precio
             )
+            
+            # Crear notificación para el vendedor si aún no ha sido notificado
+            if item.material.autor.id not in vendedores_notificados:
+                Notificacion.objects.create(
+                    usuario=item.material.autor,
+                    tipo='pago_recibido',
+                    titulo='Nuevo pago por verificar',
+                    mensaje=f'El usuario {request.user.username} ha realizado una compra y subido un comprobante de pago. Por favor, verifica el pago.',
+                    referencia_id=compra.id,
+                    referencia_tipo='compra'
+                )
+                vendedores_notificados.add(item.material.autor.id)
 
         # Procesar comprobante si existe
         if 'comprobante' in request.FILES:
@@ -345,6 +360,16 @@ def procesar_compra(request):
             compra.estado = 'pagado'
             compra.fecha_pago = timezone.now()
             compra.save()
+
+            # Notificar al comprador
+            Notificacion.objects.create(
+                usuario=request.user,
+                tipo='compra_realizada',
+                titulo='Compra realizada con éxito',
+                mensaje=f'Tu compra #{compra.codigo_seguimiento} ha sido registrada y está en espera de confirmación.',
+                referencia_id=compra.id,
+                referencia_tipo='compra'
+            )
 
         # Limpiar carrito
         items_carrito.delete()
@@ -362,3 +387,93 @@ def cancelar_compra(request):
         items_carrito.delete()
         messages.info(request, 'Has cancelado tu compra')
     return redirect('lista_materiales')
+
+# NOTIFICACIONES
+@login_required
+def notificaciones_recientes(request):
+    notificaciones = Notificacion.objects.filter(
+        usuario=request.user
+    ).order_by('-fecha_creacion')[:5]
+    
+    data = [{
+        'id': notif.id,
+        'titulo': notif.titulo,
+        'mensaje': notif.mensaje,
+        'tipo': notif.tipo,
+        'leida': notif.leida,
+        'fecha_relativa': timesince(notif.fecha_creacion),
+        'referencia_id': notif.referencia_id,
+        'imagen': notif.get_imagen_url() if hasattr(notif, 'get_imagen_url') else None
+    } for notif in notificaciones]
+    
+    return JsonResponse({
+        'notificaciones': data,
+        'no_leidas': Notificacion.objects.filter(usuario=request.user, leida=False).count()
+    })
+
+@login_required
+@require_POST
+def marcar_notificaciones_leidas(request):
+    Notificacion.objects.filter(usuario=request.user).update(leida=True)
+    return JsonResponse({'success': True})
+
+@login_required
+def todas_notificaciones(request):
+    notificaciones = Notificacion.objects.filter(usuario=request.user)
+    return render(request, 'html/notificaciones.html', {
+        'notificaciones': notificaciones
+    })
+
+@login_required
+def verificar_pago(request, compra_id):
+    compra = get_object_or_404(Compra, id=compra_id)
+    if not compra.materiales.filter(autor=request.user).exists():
+        messages.error(request, 'No tienes permiso para verificar este pago')
+        return redirect('inicio')
+    
+    if request.method == 'POST':
+        accion = request.POST.get('accion')
+        if accion == 'confirmar':
+            compra.estado = 'confirmado'
+            compra.fecha_confirmacion = timezone.now()
+            # Marcar materiales como vendidos
+            compra.materiales.filter(autor=request.user).update(estado='vendido')
+            
+            # Notificar al comprador
+            Notificacion.objects.create(
+                usuario=compra.usuario,
+                tipo='pago_confirmado',
+                titulo='Pago confirmado',
+                mensaje=f'Tu pago por la compra #{compra.codigo_seguimiento} ha sido confirmado.',
+                referencia_id=compra.id,
+                referencia_tipo='compra'
+            )
+
+        elif accion == 'rechazar':
+            compra.estado = 'rechazado'
+            compra.motivo_rechazo = request.POST.get('motivo_rechazo')
+            
+            # Notificar al comprador
+            Notificacion.objects.create(
+                usuario=compra.usuario,
+                tipo='pago_rechazado',
+                titulo='Pago rechazado',
+                mensaje=f'Tu pago por la compra #{compra.codigo_seguimiento} ha sido rechazado. Motivo: {compra.motivo_rechazo}',
+                referencia_id=compra.id,
+                referencia_tipo='compra'
+            )
+        
+        compra.save()
+        messages.success(request, f'Has {accion}ado el pago correctamente')
+        return redirect('todas_notificaciones')
+    
+    return render(request, 'html/verificar_pago.html', {
+        'compra': compra
+    })
+
+@login_required
+def mis_compras(request):
+    compras = Compra.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+    return render(request, 'html/mis_compras.html', {
+        'compras': compras
+    })

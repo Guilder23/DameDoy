@@ -25,4 +25,12 @@ urlpatterns = [
     path('compra/', views.vista_compra, name='vista_compra'),
     path('compra/procesar/', views.procesar_compra, name='procesar_compra'),
     path('compra/cancelar/', views.cancelar_compra, name='cancelar_compra'),
+    
+    # Notificaciones
+    path('notificaciones/recientes/', views.notificaciones_recientes, name='notificaciones_recientes'),
+    path('notificaciones/marcar-leidas/', views.marcar_notificaciones_leidas, name='marcar_notificaciones_leidas'),
+    path('notificaciones/todas/', views.todas_notificaciones, name='todas_notificaciones'),
+    path('verificar-pago/<int:compra_id>/', views.verificar_pago, name='verificar_pago'),
+
+    path('mis-compras/', views.mis_compras, name='mis_compras'),
 ]

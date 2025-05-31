@@ -1,0 +1,271 @@
+.mis-compras-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: var(--espaciado-lg);
+}
+
+/* Filtros */
+.filtros-compras {
+    display: flex;
+    gap: var(--espaciado-sm);
+    margin-bottom: var(--espaciado-lg);
+    overflow-x: auto;
+    padding-bottom: var(--espaciado-sm);
+}
+
+.filtro-btn {
+    padding: var(--espaciado-sm) var(--espaciado-md);
+    border: 1px solid var(--borde-claro);
+    border-radius: var(--radio-borde-md);
+    background: var(--fondo-primario);
+    color: var(--texto-secundario);
+    cursor: pointer;
+    transition: var(--transition-suave);
+    white-space: nowrap;
+}
+
+.filtro-btn.active {
+    background: var(--color-primario);
+    color: white;
+    border-color: var(--color-primario);
+}
+
+/* Tarjeta de compra */
+.compra-card {
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-lg);
+    box-shadow: var(--sombra-sm);
+    margin-bottom: var(--espaciado-lg);
+    overflow: hidden;
+}
+
+.compra-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--espaciado-md);
+    background: var(--fondo-secundario);
+}
+
+.compra-info {
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-md);
+}
+
+.estado-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radio-borde-sm);
+    font-size: var(--tamaño-texto-sm);
+    font-weight: var(--peso-medio);
+}
+
+.estado-badge.pendiente {
+    background: var(--color-advertencia-claro);
+    color: var(--color-advertencia);
+}
+
+.estado-badge.pagado {
+    background: var(--color-info-claro);
+    color: var(--color-info);
+}
+
+.estado-badge.confirmado {
+    background: var(--color-exito-claro);
+    color: var(--color-exito);
+}
+
+.estado-badge.rechazado {
+    background: var(--color-error-claro);
+    color: var(--color-error);
+}
+
+/* Lista de materiales */
+.materiales-lista {
+    padding: var(--espaciado-md);
+}
+
+.material-item {
+    display: flex;
+    gap: var(--espaciado-md);
+    padding: var(--espaciado-md);
+    border-bottom: 1px solid var(--borde-claro);
+}
+
+.material-item:last-child {
+    border-bottom: none;
+}
+
+.material-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radio-borde-sm);
+}
+
+.material-info {
+    flex: 1;
+}
+
+.vendedor {
+    color: var(--texto-secundario);
+    font-size: var(--tamaño-texto-sm);
+    margin: var(--espaciado-xs) 0;
+}
+
+/* Footer de compra */
+.compra-footer {
+    padding: var(--espaciado-md);
+    background: var(--fondo-secundario);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total {
+    font-size: var(--tamaño-texto-lg);
+    font-weight: var(--peso-bold);
+}
+
+.precio-total {
+    color: var(--color-primario);
+    margin-left: var(--espaciado-sm);
+}
+
+.acciones {
+    display: flex;
+    gap: var(--espaciado-sm);
+}
+
+.btn-pagar,
+.btn-cancelar {
+    padding: var(--espaciado-sm) var(--espaciado-md);
+    border-radius: var(--radio-borde-md);
+    font-weight: var(--peso-medio);
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-xs);
+    cursor: pointer;
+    transition: var(--transition-suave);
+}
+
+.btn-pagar {
+    background: var(--color-primario);
+    color: white;
+    border: none;
+}
+
+.btn-cancelar {
+    background: var(--color-error);
+    color: white;
+    border: none;
+}
+
+/* Modal de pago */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: var(--z-modal);
+}
+
+.modal-content {
+    background: var(--fondo-primario);
+    padding: var(--espaciado-xl);
+    border-radius: var(--radio-borde-lg);
+    max-width: 500px;
+    margin: 5% auto;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    right: var(--espaciado-md);
+    top: var(--espaciado-md);
+    font-size: var(--tamaño-texto-xl);
+    cursor: pointer;
+}
+
+.qr-container {
+    text-align: center;
+    margin: var(--espaciado-lg) 0;
+}
+
+.qr-imagen {
+    max-width: 300px;
+    margin-bottom: var(--espaciado-md);
+}
+
+.instrucciones {
+    color: var(--texto-secundario);
+    line-height: 1.6;
+}
+
+.comprobante-preview {
+    margin-top: var(--espaciado-md);
+    text-align: center;
+}
+
+.comprobante-preview img {
+    max-width: 100%;
+    border-radius: var(--radio-borde-md);
+}
+
+/* Estado vacío */
+.no-compras {
+    text-align: center;
+    padding: var(--espaciado-xl);
+    color: var(--texto-secundario);
+}
+
+.no-compras i {
+    font-size: 3rem;
+    margin-bottom: var(--espaciado-md);
+    color: var(--texto-terciario);
+}
+
+.btn-explorar {
+    display: inline-block;
+    padding: var(--espaciado-sm) var(--espaciado-lg);
+    background: var(--color-primario);
+    color: white;
+    border-radius: var(--radio-borde-md);
+    text-decoration: none;
+    margin-top: var(--espaciado-md);
+    transition: var(--transition-suave);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .compra-header,
+    .compra-footer {
+        flex-direction: column;
+        gap: var(--espaciado-sm);
+    }
+
+    .acciones {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .btn-pagar,
+    .btn-cancelar {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .material-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .material-item img {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+    }
+}

@@ -1,0 +1,90 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Mis Notificaciones{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/notificaciones.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="notificaciones-container">
+    <h1>Mis Notificaciones</h1>
+
+    <div class="filtros-notificaciones">
+        <button class="filtro-btn active" data-filtro="todas">Todas</button>
+        <button class="filtro-btn" data-filtro="no-leidas">No leídas</button>
+        <button class="filtro-btn" data-filtro="pagos">Pagos</button>
+        <button class="filtro-btn" data-filtro="ventas">Ventas</button>
+        <button class="filtro-btn" data-filtro="sistema">Sistema</button>
+    </div>
+
+    <div class="notificaciones-lista">
+        {% for notif in notificaciones %}
+        <div class="notificacion-item {% if not notif.leida %}no-leida{% endif %}" 
+             data-tipo="{{ notif.tipo }}">
+            <div class="notif-icono">
+                {% if notif.tipo == 'pago_recibido' %}
+                    <i class="fas fa-money-bill-wave"></i>
+                {% elif notif.tipo == 'material_vendido' %}
+                    <i class="fas fa-shopping-cart"></i>
+                {% elif notif.tipo == 'material_publicado' %}
+                    <i class="fas fa-book"></i>
+                {% else %}
+                    <i class="fas fa-bell"></i>
+                {% endif %}
+            </div>
+
+            <div class="notif-contenido">
+                <h3>{{ notif.titulo }}</h3>
+                <p>{{ notif.mensaje }}</p>
+                <span class="notif-fecha">{{ notif.fecha_creacion|timesince }}</span>
+            </div>
+
+            {% if notif.tipo == 'pago_recibido' and not notif.leida %}
+            <div class="notif-acciones">
+                <a href="{% url 'verificar_pago' notif.referencia_id %}" class="btn-verificar">
+                    Verificar pago
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="no-notificaciones">
+            <i class="fas fa-bell-slash"></i>
+            <p>No tienes notificaciones</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.filtro-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // Actualizar botones activos
+        document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+
+        // Filtrar notificaciones
+        const filtro = this.dataset.filtro;
+        const items = document.querySelectorAll('.notificacion-item');
+
+        items.forEach(item => {
+            if (filtro === 'todas') {
+                item.style.display = 'flex';
+            } else if (filtro === 'no-leidas') {
+                item.style.display = item.classList.contains('no-leida') ? 'flex' : 'none';
+            } else if (filtro === 'pagos') {
+                item.style.display = item.dataset.tipo.includes('pago') ? 'flex' : 'none';
+            } else if (filtro === 'ventas') {
+                item.style.display = item.dataset.tipo.includes('vendido') ? 'flex' : 'none';
+            } else if (filtro === 'sistema') {
+                item.style.display = item.dataset.tipo.includes('sistema') ? 'flex' : 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

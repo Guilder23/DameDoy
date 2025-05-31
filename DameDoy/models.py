@@ -87,7 +87,7 @@ class PerfilUsuario(models.Model):
 def crear_perfil_usuario(sender, instance, created, **kwargs):
     if created:
         PerfilUsuario.objects.create(usuario=instance)
-
+#Carrito de Compras-------------------------------------------------
 class CarritoItem(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     material = models.ForeignKey(Material, on_delete=models.CASCADE)
@@ -99,7 +99,7 @@ class CarritoItem(models.Model):
 
     def __str__(self):
         return f"{self.usuario.username} - {self.material.titulo}"
-
+#Compra y Detalle de Compra-------------------------------------------------
 class Compra(models.Model):
     ESTADO_CHOICES = [
         ('pendiente', 'Pendiente de pago'),
@@ -131,4 +131,49 @@ class DetalleCompra(models.Model):
 
     class Meta:
         ordering = ['-fecha_agregado']
+
+class Notificacion(models.Model):
+    TIPO_CHOICES = [
+        ('pago_recibido', 'Pago Recibido'),
+        ('pago_confirmado', 'Pago Confirmado'),
+        ('pago_rechazado', 'Pago Rechazado'),
+        ('compra_realizada', 'Compra Realizada'),
+        ('material_vendido', 'Material Vendido'),
+        ('material_publicado', 'Material Publicado'),
+        ('material_rechazado', 'Material Rechazado')
+    ]
+
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notificaciones')
+    tipo = models.CharField(max_length=50, choices=TIPO_CHOICES)
+    titulo = models.CharField(max_length=200)
+    mensaje = models.TextField()
+    leida = models.BooleanField(default=False)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    referencia_id = models.IntegerField(null=True, blank=True)  # ID de la compra o material relacionado
+    referencia_tipo = models.CharField(max_length=50, null=True, blank=True)  # 'compra' o 'material'
+
+    class Meta:
+        ordering = ['-fecha_creacion']
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.titulo}"
+
+    def marcar_como_leida(self):
+        self.leida = True
+        self.save()
+
+    def get_imagen_url(self):
+        """Obtener la URL de la imagen relacionada con la notificación"""
+        if self.referencia_tipo == 'compra':
+            try:
+                compra = Compra.objects.get(id=self.referencia_id)
+                if compra.comprobante:
+                    return compra.comprobante.url
+                # Si no hay comprobante, mostrar la imagen del primer material
+                primer_material = compra.materiales.first()
+                if primer_material and primer_material.imagen:
+                    return primer_material.imagen.url
+            except Compra.DoesNotExist:
+                pass
+        return None  # O una URL de imagen por defecto
 

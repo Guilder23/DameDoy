@@ -46,6 +46,54 @@
             </div>
         </div>
     </div>
+    <!-- En nav-right, junto al carrito -->
+    <div class="notificaciones-container">
+        <button class="notif-btn" id="notifBtn">
+            <i class="fas fa-bell"></i>
+            {% if notificaciones_no_leidas > 0 %}
+            <span class="notif-contador" id="notifContador">{{ notificaciones_no_leidas }}</span>
+            {% endif %}
+        </button>
+        
+        <div class="notif-dropdown" id="notifDropdown">
+            <div class="notif-header">
+                <h3>Notificaciones</h3>
+                {% if notificaciones_no_leidas > 0 %}
+                <button class="marcar-leidas" onclick="marcarTodasComoLeidas()">
+                    Marcar todas como leídas
+                </button>
+                {% endif %}
+            </div>
+            
+            <div class="notif-items" id="notifItems">
+                {% for notif in notificaciones_recientes %}
+                    <div class="notif-item {% if not notif.leida %}no-leida{% endif %}">
+                        {% if notif.referencia_tipo == 'compra' %}
+                            <img src="{{ notif.compra.materiales.first.imagen.url }}" alt="Material" class="notif-img">
+                        {% endif %}
+                        <div class="notif-content">
+                            <h4>{{ notif.titulo }}</h4>
+                            <p>{{ notif.mensaje }}</p>
+                            <span class="notif-fecha">{{ notif.fecha_creacion|timesince }}</span>
+                        </div>
+                        {% if notif.tipo == 'pago_recibido' %}
+                            <a href="{% url 'verificar_pago' notif.referencia_id %}" class="btn-verificar">
+                                Verificar pago
+                            </a>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <div class="notif-vacia">No hay notificaciones nuevas</div>
+                {% endfor %}
+            </div>
+            
+            <div class="notif-footer">
+                <a href="{% url 'todas_notificaciones' %}" class="ver-todas">
+                    Ver todas las notificaciones
+                </a>
+            </div>
+        </div>
+    </div>
     {% endif %}
     <button class="theme-toggle" onclick="toggleTheme()">
         <i class="fas fa-sun" id="theme-icon"></i>
@@ -108,6 +156,12 @@
                         <span class="sidebar-text">Perfil</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{% url 'mis_compras' %}" class="sidebar-link {% if request.resolver_match.url_name == 'mis_compras' %}active{% endif %}">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="sidebar-text">Mis compras</span>
+                    </a>
+                </li>
                 <li class="sidebar-divider"></li>
                 <li>
                     <a href="{% url 'logout' %}" class="sidebar-link">
@@ -143,6 +197,7 @@
 
     <script src="{% static 'js/theme.js' %}"></script>
     <script src="{% static 'js/carrito.js' %}"></script>
+    <script src="{% static 'js/notificaciones.js' %}"></script>
     {% block scripts %}{% endblock %}
     <script>
         // Control del sidebar

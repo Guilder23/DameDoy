@@ -1,0 +1,118 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Verificar Pago{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/verificar_pago.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="verificar-container">
+    <h1>Verificar Pago de Compra #{{ compra.codigo_seguimiento }}</h1>
+
+    <div class="verificar-grid">
+        <div class="detalles-compra">
+            <h2>Detalles de la Compra</h2>
+            <div class="info-compra">
+                <p><strong>Comprador:</strong> {{ compra.usuario.get_full_name|default:compra.usuario.username }}</p>
+                <p><strong>Fecha:</strong> {{ compra.fecha_creacion }}</p>
+                <p><strong>Total:</strong> ${{ compra.total }}</p>
+                <p><strong>Estado actual:</strong> {{ compra.get_estado_display }}</p>
+            </div>
+
+            <div class="materiales-lista">
+                <h3>Materiales incluidos</h3>
+                {% for detalle in compra.detallecompra_set.all %}
+                {% if detalle.material.autor == user %}
+                <div class="material-item">
+                    <img src="{{ detalle.material.imagen.url }}" alt="{{ detalle.material.titulo }}">
+                    <div class="material-info">
+                        <h4>{{ detalle.material.titulo }}</h4>
+                        <p class="precio">${{ detalle.precio_unitario }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="comprobante-section">
+                <h3>Comprobante de Pago</h3>
+                {% if compra.comprobante %}
+                <div class="comprobante-preview">
+                    <img src="{{ compra.comprobante.url }}" alt="Comprobante de pago">
+                </div>
+                {% else %}
+                <p class="no-comprobante">No se ha subido comprobante aún</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="acciones-pago">
+            <h2>Acciones</h2>
+            <form method="post" class="verificar-form">
+                {% csrf_token %}
+                
+                <div class="botones-accion">
+                    <button type="submit" name="accion" value="confirmar" class="btn-confirmar">
+                        <i class="fas fa-check-circle"></i> Confirmar Pago
+                    </button>
+                    
+                    <button type="button" class="btn-rechazar" onclick="mostrarModalRechazo()">
+                        <i class="fas fa-times-circle"></i> Rechazar Pago
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de rechazo -->
+<div id="modalRechazo" class="modal">
+    <div class="modal-content">
+        <h3>Rechazar Pago</h3>
+        <form method="post" class="rechazo-form">
+            {% csrf_token %}
+            <input type="hidden" name="accion" value="rechazar">
+            
+            <div class="form-group">
+                <label for="motivo_rechazo">Motivo del rechazo</label>
+                <textarea id="motivo_rechazo" 
+                          name="motivo_rechazo" 
+                          required 
+                          rows="4"
+                          placeholder="Explica el motivo del rechazo"></textarea>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="submit" class="btn-confirmar-rechazo">
+                    Confirmar Rechazo
+                </button>
+                <button type="button" class="btn-cancelar" onclick="cerrarModalRechazo()">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function mostrarModalRechazo() {
+    document.getElementById('modalRechazo').style.display = 'block';
+}
+
+function cerrarModalRechazo() {
+    document.getElementById('modalRechazo').style.display = 'none';
+}
+
+// Cerrar modal al hacer clic fuera
+window.onclick = function(event) {
+    const modal = document.getElementById('modalRechazo');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Mis Compras{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/mis_compras.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="mis-compras-container">
+    <h1>Mis Compras</h1>
+
+    <div class="filtros-compras">
+        <button class="filtro-btn active" data-estado="todos">Todas</button>
+        <button class="filtro-btn" data-estado="pendiente">Pendientes</button>
+        <button class="filtro-btn" data-estado="pagado">En revisión</button>
+        <button class="filtro-btn" data-estado="confirmado">Confirmadas</button>
+        <button class="filtro-btn" data-estado="rechazado">Rechazadas</button>
+    </div>
+
+    <div class="compras-lista">
+        {% for compra in compras %}
+        <div class="compra-card" data-estado="{{ compra.estado }}">
+            <div class="compra-header">
+                <div class="compra-info">
+                    <h3>Compra #{{ compra.codigo_seguimiento }}</h3>
+                    <span class="estado-badge {{ compra.estado }}">
+                        {{ compra.get_estado_display }}
+                    </span>
+                </div>
+                <div class="compra-fecha">
+                    {{ compra.fecha_creacion|date:"d/m/Y H:i" }}
+                </div>
+            </div>
+
+            <div class="materiales-lista">
+                {% for material in compra.materiales.all %}
+                <div class="material-item">
+                    <img src="{{ material.imagen.url }}" alt="{{ material.titulo }}">
+                    <div class="material-info">
+                        <h4>{{ material.titulo }}</h4>
+                        <p class="vendedor">
+                            <i class="fas fa-user"></i> 
+                            Vendedor: {{ material.autor.get_full_name|default:material.autor.username }}
+                        </p>
+                        <p class="precio">${{ material.precio }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="compra-footer">
+                <div class="total">
+                    <span>Total:</span>
+                    <span class="precio-total">${{ compra.total }}</span>
+                </div>
+
+                {% if compra.estado == 'pendiente' %}
+                <div class="acciones">
+                    <button class="btn-pagar" onclick="mostrarModalPago('{{ compra.id }}')">
+                        <i class="fas fa-qrcode"></i> Realizar Pago
+                    </button>
+                </div>
+                {% elif compra.estado == 'rechazado' and compra.motivo_rechazo %}
+                <div class="motivo-rechazo">
+                    <p><strong>Motivo del rechazo:</strong> {{ compra.motivo_rechazo }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-compras">
+            <i class="fas fa-shopping-bag"></i>
+            <p>No has realizado ninguna compra aún</p>
+            <a href="{% url 'lista_materiales' %}" class="btn-explorar">
+                Explorar materiales
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.filtro-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const estado = this.dataset.estado;
+        document.querySelectorAll('.compra-card').forEach(card => {
+            if (estado === 'todos' || card.dataset.estado === estado) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
