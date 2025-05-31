@@ -129,7 +129,7 @@
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="first_name">Nombre</label>
-                                <input type="text" id="first_name" name="first_name" disabled value="{{ user.first_name }}">
+                                <input type="text" id="first_name" name="first_name" disabled required value="{{ user.first_name }}">
                             </div>
                             <div class="form-group">
                                 <label for="last_name">Apellido</label>
@@ -137,23 +137,23 @@
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="email" id="email" name="email" disabled value="{{ user.email }}">
+                                <input type="email" id="email" name="email" disabled required value="{{ user.email }}">
                             </div>
                             <div class="form-group">
                                 <label for="telefono">Teléfono</label>
-                                <input type="tel" id="telefono" name="telefono" disabled value="{{ perfil.telefono }}">
+                                <input type="tel" id="telefono" name="telefono" disabled required value="{{ perfil.telefono }}">
                             </div>
                             <div class="form-group">
                                 <label for="direccion">Dirección</label>
-                                <input type="text" id="direccion" name="direccion" disabled value="{{ perfil.direccion }}">
+                                <input type="text" id="direccion" name="direccion" disabled required value="{{ perfil.direccion }}">
                             </div>
                             <div class="form-group">
                                 <label for="fecha_nacimiento">Fecha de Nacimiento</label>
-                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" disabled value="{{ perfil.fecha_nacimiento }}">
+                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" disabled required max="2007-01-01"  value="{{ perfil.fecha_nacimiento }}">
                             </div>
                             <div class="form-group">
                                 <label for="genero">Género</label>
-                                <select id="genero" name="genero" disabled >
+                                <select id="genero" name="genero" disabled required >
                                     <option value="" {% if perfil.genero == "" %}selected{% endif %}>Seleccione</option>
                                     <option value="masculino" {% if perfil.genero == "masculino" %}selected{% endif %}>Masculino</option>
                                     <option value="femenino" {% if perfil.genero == "femenino" %}selected{% endif %}>Femenino</option>
@@ -167,7 +167,7 @@
                         <h2>Sobre Mí</h2>
                         <div class="form-group">
                             <label for="biografia">Biografía</label>
-                            <textarea id="biografia" name="biografia" disabled rows="4">{{ perfil.biografia }}</textarea>
+                            <textarea id="biografia" name="biografia" disabled required rows="4">{{ perfil.biografia }}</textarea>
                         </div>
                     </div>
 

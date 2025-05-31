@@ -48,18 +48,36 @@ def logout_view(request):
 #MOSTRAR MATERIALES---------------------------------------------------------
 @login_required
 def publicar_material(request):
+    perfil, created = PerfilUsuario.objects.get_or_create(usuario=request.user)
+
+    # Verificar si el perfil está completo
+    campos_obligatorios = [
+        request.user.first_name,
+        request.user.last_name,
+        request.user.email,
+        perfil.telefono,
+        perfil.direccion,
+        perfil.fecha_nacimiento,
+        perfil.genero
+    ]
+
+    if not all(campos_obligatorios):
+        messages.warning(request, 'Debes completar tu perfil antes de publicar un material.')
+        return redirect('perfil_usuario')
+
     if request.method == 'POST':
         form = MaterialForm(request.POST, request.FILES)
         if form.is_valid():
             material = form.save(commit=False)
             material.autor = request.user
             material.save()
-            messages.success(request, '¡Material publicado exitosamente...!' +  material.titulo)
+            messages.success(request, f'¡Material publicado exitosamente...! {material.titulo}')
             return redirect('lista_materiales')
     else:
         form = MaterialForm()
     
     return render(request, 'html/publicar_material.html', {'form': form})
+
 
 def lista_materiales(request):
     materiales = Material.objects.all()
