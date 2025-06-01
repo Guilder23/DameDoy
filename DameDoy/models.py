@@ -75,6 +75,24 @@ class PerfilUsuario(models.Model):
     biografia = models.TextField(null=True, blank=True)
     redes_sociales = models.JSONField(default=dict, blank=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
+    qr_pago = models.ImageField(
+        upload_to='qr_pagos/', 
+        null=True, 
+        blank=True,
+        verbose_name="QR para pagos"
+    )
+    cuenta_banco = models.CharField(
+        max_length=100, 
+        null=True, 
+        blank=True,
+        verbose_name="Número de cuenta bancaria"
+    )
+    banco = models.CharField(
+        max_length=100, 
+        null=True, 
+        blank=True,
+        verbose_name="Nombre del banco"
+    )
     
     class Meta:
         verbose_name = "Perfil de Usuario"

@@ -84,7 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
             form.style.display = editando ? 'block' : 'none';
             
             // Habilitar/deshabilitar campos
-            const inputs = form.querySelectorAll('input:not([type="file"]), textarea, select');
+            const inputs = form.querySelectorAll('input:not([type="file"]):not(#qr_pago), textarea, select, #qr_pago');
+
             inputs.forEach(input => {
                 input.disabled = !editando;
             });

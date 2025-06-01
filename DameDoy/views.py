@@ -145,7 +145,7 @@ def perfil_usuario(request):
         perfil.telefono = request.POST.get('telefono', '')
         perfil.biografia = request.POST.get('biografia', '')
         perfil.direccion = request.POST.get('direccion', '')
-        perfil.fecha_nacimiento = request.POST.get('fecha_nacimiento') or None
+        perfil.fecha_nacimiento = request.POST.get('fecha_nacimiento')
         perfil.genero = request.POST.get('genero', '')
         
         # Manejar redes sociales
@@ -163,15 +163,19 @@ def perfil_usuario(request):
         if 'foto_portada' in request.FILES:
             perfil.foto_portada = request.FILES['foto_portada']
         
+        # Actualizar datos de pago
+        perfil.banco = request.POST.get('banco', '')
+        perfil.cuenta_banco = request.POST.get('cuenta_banco', '')
+        
+        # Manejar archivo QR
+        if 'qr_pago' in request.FILES:
+            perfil.qr_pago = request.FILES['qr_pago']
+        
         perfil.save()
         messages.success(request, 'Perfil actualizado exitosamente')
         return redirect('perfil_usuario')
-
-    context = {
-        'perfil': perfil,
-        'redes_sociales': json.dumps(perfil.redes_sociales)
-    }
-    return render(request, 'html/perfil_usuario.html', context)
+    
+    return render(request, 'html/perfil_usuario.html', {'perfil': perfil})
 
 @require_POST
 @login_required
@@ -310,7 +314,23 @@ def vista_compra(request):
         return redirect('lista_materiales')
     
     total = sum(item.material.precio for item in items_carrito)
-    vendedores = set(item.material.autor for item in items_carrito)
+    vendedores = []
+    
+    # Obtener información de pago de los vendedores
+    for item in items_carrito:
+        vendedor = {
+            'usuario': item.material.autor,
+            'perfil': item.material.autor.perfilusuario,
+            'materiales': [],
+            'subtotal': 0
+        }
+        for carrito_item in items_carrito:
+            if carrito_item.material.autor == item.material.autor:
+                vendedor['materiales'].append(carrito_item.material)
+                vendedor['subtotal'] += carrito_item.material.precio
+        
+        if vendedor not in vendedores:
+            vendedores.append(vendedor)
     
     return render(request, 'html/compra.html', {
         'items': items_carrito,

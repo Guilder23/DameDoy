@@ -48,24 +48,63 @@
             </div>
 
             <div class="metodo-pago">
-                <h2>Método de pago</h2>
-                <button class="btn-mostrar-qr" onclick="mostrarQR()">
-                    <i class="fas fa-qrcode"></i> Mostrar QR de pago
-                </button>
-                
-                <div id="qrModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <h3>Escanea para pagar</h3>
-                        <img src="{% static 'img/qr-pago.png' %}" alt="QR de pago" class="qr-imagen">
-                        <p class="instrucciones">
-                            1. Escanea el código QR<br>
-                            2. Realiza el pago<br>
-                            3. Guarda el comprobante<br>
-                            4. Súbelo en el formulario siguiente
-                        </p>
+                <h2>Métodos de pago por vendedor</h2>
+                {% for vendedor in vendedores %}
+                <div class="vendedor-pago">
+                    <h3>{{ vendedor.usuario.get_full_name|default:vendedor.usuario.username }}</h3>
+                    <p class="subtotal">Subtotal: ${{ vendedor.subtotal }}</p>
+                    
+                    {% if vendedor.perfil.qr_pago or vendedor.perfil.banco %}
+                    <button class="btn-mostrar-qr" onclick="mostrarQR('{{ vendedor.usuario.username }}')">
+                        <i class="fas fa-qrcode"></i> Ver información de pago
+                    </button>
+                    
+                    <div id="qrModal{{ vendedor.usuario.username }}" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="cerrarQR('{{ vendedor.usuario.username }}')">&times;</span>
+                            <h3>Datos de pago de {{ vendedor.usuario.get_full_name|default:vendedor.usuario.username }}</h3>
+                            
+                            <div class="modal-grid">
+                                <!-- Columna izquierda: Datos bancarios e instrucciones -->
+                                <div class="modal-left">
+                                    {% if vendedor.perfil.banco and vendedor.perfil.cuenta_banco %}
+                                    <div class="datos-bancarios">
+                                        <h4>Datos bancarios:</h4>
+                                        <p><strong>Banco:</strong> {{ vendedor.perfil.banco }}</p>
+                                        <p><strong>Número de cuenta:</strong> {{ vendedor.perfil.cuenta_banco }}</p>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="instrucciones-pago">
+                                        <h4>Instrucciones:</h4>
+                                        <p class="instrucciones">
+                                            1. Realiza el pago por ${{ vendedor.subtotal }} usando cualquiera de los métodos disponibles<br>
+                                            2. Guarda el comprobante de pago<br>
+                                            3. Sube el comprobante en el formulario de abajo
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Columna derecha: QR -->
+                                {% if vendedor.perfil.qr_pago %}
+                                <div class="modal-right">
+                                    <div class="qr-container">
+                                        <h4>QR de pago:</h4>
+                                        <img src="{{ vendedor.perfil.qr_pago.url }}" alt="QR de pago" class="qr-imagen">
+                                        <button class="btn-expandir-qr" onclick="expandirQR(this)">
+                                            <i class="fas fa-expand-alt"></i> Ampliar QR
+                                        </button>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
+                    {% else %}
+                    <p class="no-qr">El vendedor no ha configurado sus datos de pago</p>
+                    {% endif %}
                 </div>
+                {% endfor %}
             </div>
 
             <form method="post" action="{% url 'procesar_compra' %}" enctype="multipart/form-data" class="comprobante-form">
@@ -95,17 +134,19 @@
         </div>
     </div>
 </div>
+    <script src="{% static 'js/compra.js' %}"></script>
 {% endblock %}
 
 {% block scripts %}
 <script>
-function mostrarQR() {
-    const modal = document.getElementById('qrModal');
+function mostrarQR(username) {
+    const modal = document.getElementById('qrModal' + username);
     modal.style.display = "block";
 }
 
-document.querySelector('.close').onclick = function() {
-    document.getElementById('qrModal').style.display = "none";
+function cerrarQR(username) {
+    const modal = document.getElementById('qrModal' + username);
+    modal.style.display = "none";
 }
 
 document.getElementById('comprobante').addEventListener('change', function(e) {
