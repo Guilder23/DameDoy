@@ -52,7 +52,6 @@
     align-items: center;
     gap: var(--espaciado-md);
 }
-
 .estado-badge {
     padding: 0.25rem 0.75rem;
     border-radius: var(--radio-borde-sm);
@@ -121,7 +120,17 @@
     justify-content: space-between;
     align-items: center;
 }
-
+.compra-footer a {
+    text-decoration: none;
+    color: var(--texto-primario);
+    font-weight: var(--peso-bold);
+    background-color: var(--color-primario);
+    border-radius: var(--radio-borde-md);
+    padding: var(--espaciado-xs) var(--espaciado-md);
+}
+.compra-footer a:hover {
+    background-color: var(--color-primario-hover);
+}
 .total {
     font-size: var(--tamaño-texto-lg);
     font-weight: var(--peso-bold);

@@ -1,0 +1,118 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Detalle de Compra{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/detalle_compra.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="detalle-compra-container">
+    <div class="volver-link">
+        <a href="{% url 'mis_compras' %}">
+            <i class="fas fa-arrow-left"></i> Volver a Mis Compras
+        </a>
+    </div>
+
+    <div class="compra-header">
+        <div class="compra-info">
+            <h1>Compra #{{ compra.codigo_seguimiento }}</h1>
+            <span class="estado-badge {{ compra.estado }}">
+                {{ compra.get_estado_display }}
+            </span>
+        </div>
+        <div class="compra-meta">
+            <p><i class="fas fa-calendar"></i> Fecha: {{ compra.fecha_creacion|date:"d/m/Y H:i" }}</p>
+            {% if compra.fecha_confirmacion %}
+            <p><i class="fas fa-check-circle"></i> Confirmación: {{ compra.fecha_confirmacion|date:"d/m/Y H:i" }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="compra-grid">
+        <!-- Panel principal -->
+        <div class="panel-principal">
+            {% for vendedor, datos in materiales_por_vendedor.items %}
+            <div class="vendedor-seccion">
+                <div class="vendedor-header">
+                    <h2>
+                        <i class="fas fa-user-circle"></i>
+                        {{ vendedor.get_full_name|default:vendedor.username }}
+                    </h2>
+                    <span class="subtotal">Subtotal: ${{ datos.subtotal|floatformat:2 }}</span>
+                </div>
+
+                <div class="materiales-grid">
+                    {% for material in datos.materiales %}
+                    <div class="material-card">
+                        <div class="material-imagen">
+                            <img src="{{ material.imagen.url }}" alt="{{ material.titulo }}">
+                        </div>
+                        <div class="material-info">
+                            <h3>{{ material.titulo }}</h3>
+                            <p class="tipo">
+                                <i class="fas fa-bookmark"></i> 
+                                {{ material.get_tipo_display }}
+                            </p>
+                            <p class="materia">
+                                <i class="fas fa-book"></i>
+                                {{ material.materia }}
+                            </p>
+                            <p class="precio">${{ material.precio }}</p>
+                        </div>
+                        {% if compra.estado == 'confirmado' %}
+                        <div class="material-acciones">
+                            <a href="{{ material.archivo.url }}" class="btn-descargar" download>
+                                <i class="fas fa-download"></i> Descargar Material
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Panel lateral -->
+        <div class="panel-lateral">
+            <div class="resumen-compra">
+                <h2>Resumen de Compra</h2>
+                <div class="resumen-items">
+                    <div class="resumen-item">
+                        <span>Subtotal</span>
+                        <span>${{ compra.total }}</span>
+                    </div>
+                    <div class="resumen-item total">
+                        <span>Total</span>
+                        <span>${{ compra.total }}</span>
+                    </div>
+                </div>
+            </div>
+
+            {% if compra.comprobante %}
+            <div class="comprobante-seccion">
+                <h2>Comprobante de Pago</h2>
+                <div class="comprobante-preview">
+                    <img src="{{ compra.comprobante.url }}" alt="Comprobante">
+                    <a href="{{ compra.comprobante.url }}" class="btn-expandir" target="_blank">
+                        <i class="fas fa-expand-alt"></i> Ver completo
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if compra.estado == 'rechazado' and compra.motivo_rechazo %}
+            <div class="rechazo-seccion">
+                <h2>Motivo del Rechazo</h2>
+                <div class="motivo-rechazo">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>{{ compra.motivo_rechazo }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

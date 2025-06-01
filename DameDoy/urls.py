@@ -37,4 +37,7 @@ urlpatterns = [
     # Rutas para ventas
     path('mis-ventas/', views.mis_ventas, name='mis_ventas'),
     path('venta/<int:venta_id>/', views.detalle_venta, name='detalle_venta'),
+
+    # Detalle de compra
+    path('compra/<str:codigo_seguimiento>/', views.detalle_compra, name='detalle_compra'),
 ]

@@ -67,6 +67,9 @@
                     <p><strong>Motivo del rechazo:</strong> {{ compra.motivo_rechazo }}</p>
                 </div>
                 {% endif %}
+                <a href="{% url 'detalle_compra' compra.codigo_seguimiento %}" class="btn-detalle">
+                        Ver
+                </a>
             </div>
         </div>
         {% empty %}

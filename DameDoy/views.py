@@ -508,6 +508,31 @@ def mis_compras(request):
     })
 
 @login_required
+def detalle_compra(request, codigo_seguimiento):
+    compra = get_object_or_404(Compra, 
+                              codigo_seguimiento=codigo_seguimiento,
+                              usuario=request.user)
+    
+    detalles_compra = DetalleCompra.objects.filter(compra=compra).select_related('material')
+    
+    # Agrupar materiales por vendedor
+    materiales_por_vendedor = {}
+    for detalle in detalles_compra:
+        vendedor = detalle.material.autor
+        if vendedor not in materiales_por_vendedor:
+            materiales_por_vendedor[vendedor] = {
+                'materiales': [],
+                'subtotal': 0
+            }
+        materiales_por_vendedor[vendedor]['materiales'].append(detalle.material)
+        materiales_por_vendedor[vendedor]['subtotal'] += detalle.precio_unitario
+    
+    return render(request, 'html/detalle_compra.html', {
+        'compra': compra,
+        'materiales_por_vendedor': materiales_por_vendedor,
+    })
+
+@login_required
 def mis_ventas(request):
     # Obtener todas las ventas (materiales vendidos)
     ventas = DetalleCompra.objects.filter(
