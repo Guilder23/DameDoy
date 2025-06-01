@@ -76,10 +76,21 @@
                             <p>{{ notif.mensaje }}</p>
                             <span class="notif-fecha">{{ notif.fecha_creacion|timesince }}</span>
                         </div>
+                        <!-- Reemplazar la sección de acciones de notificación -->
                         {% if notif.tipo == 'pago_recibido' %}
-                            <a href="{% url 'verificar_pago' notif.referencia_id %}" class="btn-verificar">
-                                Verificar pago
-                            </a>
+                            {% if notif.compra.estado == 'pagado' %}
+                                <a href="{% url 'verificar_pago' notif.referencia_id %}" class="btn-verificar">
+                                    <i class="fas fa-check"></i> Verificar pago
+                                </a>
+                            {% elif notif.compra.estado == 'confirmado' %}
+                                <span class="estado-badge confirmado">
+                                    <i class="fas fa-check-circle"></i> Pago verificado
+                                </span>
+                            {% elif notif.compra.estado == 'rechazado' %}
+                                <span class="estado-badge rechazado">
+                                    <i class="fas fa-times-circle"></i> Pago rechazado
+                                </span>
+                            {% endif %}
                         {% endif %}
                     </div>
                 {% empty %}
@@ -135,25 +146,34 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'mis_materiales' %}" class="sidebar-link {% if request.resolver_match.url_name == 'mis_materiales' %}active{% endif %}">
-                        <i class="fas fa-folder-open"></i>
-                        <span class="sidebar-text">Mis materiales</span>
-                    </a>
-                <li>
-                    <a href="{% url 'lista_materiales' %}" class="sidebar-link {% if request.resolver_match.url_name == 'lista_materiales' %}active{% endif %}">
-                        <i class="fas fa-book"></i>
-                        <span class="sidebar-text">Materiales</span>
-                    </a>
-                <li>
                     <a href="{% url 'publicar_material' %}" class="sidebar-link {% if request.resolver_match.url_name == 'publicar_material' %}active{% endif %}">
                         <i class="fas fa-upload"></i>
                         <span class="sidebar-text">Publicar</span>
                     </a>
                 </li>
                 <li>
+                    <a href="{% url 'lista_materiales' %}" class="sidebar-link {% if request.resolver_match.url_name == 'lista_materiales' %}active{% endif %}">
+                        <i class="fas fa-book"></i>
+                        <span class="sidebar-text">Materiales</span>
+                    </a>
+                </li>
+                <li class="sidebar-divider"></li>
+                <li>
                     <a href="{% url 'perfil_usuario' %}" class="sidebar-link {% if request.resolver_match.url_name == 'perfil_usuario' %}active{% endif %}">
                         <i class="fas fa-user "></i>
-                        <span class="sidebar-text">Perfil</span>
+                        <span class="sidebar-text"> Mi Perfil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'todas_notificaciones' %}" class="sidebar-link {% if request.resolver_match.url_name == 'todas_notificaciones' %}active{% endif %}">
+                        <i class="fas fa-bell"></i>
+                        <span class="sidebar-text">Notificaciones</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'mis_materiales' %}" class="sidebar-link {% if request.resolver_match.url_name == 'mis_materiales' %}active{% endif %}">
+                        <i class="fas fa-folder-open"></i>
+                        <span class="sidebar-text">Mis materiales</span>
                     </a>
                 </li>
                 <li>
@@ -168,6 +188,7 @@
                         <span class="sidebar-text">Mis Ventas</span>
                     </a>
                 </li>
+                <li class="sidebar-divider"></li>
                 <li class="sidebar-divider"></li>
                 <li>
                     <a href="{% url 'logout' %}" class="sidebar-link">

@@ -48,21 +48,37 @@
             </div>
         </div>
 
+        <!-- Reemplazar la sección de acciones-pago -->
         <div class="acciones-pago">
             <h2>Acciones</h2>
-            <form method="post" class="verificar-form">
-                {% csrf_token %}
-                
-                <div class="botones-accion">
-                    <button type="submit" name="accion" value="confirmar" class="btn-confirmar">
-                        <i class="fas fa-check-circle"></i> Confirmar Pago
-                    </button>
+            {% if compra.estado == 'pagado' %}
+                <form method="post" class="verificar-form">
+                    {% csrf_token %}
                     
-                    <button type="button" class="btn-rechazar" onclick="mostrarModalRechazo()">
-                        <i class="fas fa-times-circle"></i> Rechazar Pago
-                    </button>
+                    <div class="botones-accion">
+                        <button type="submit" name="accion" value="confirmar" class="btn-confirmar">
+                            <i class="fas fa-check-circle"></i> Confirmar Pago
+                        </button>
+                        
+                        <button type="button" class="btn-rechazar" onclick="mostrarModalRechazo()">
+                            <i class="fas fa-times-circle"></i> Rechazar Pago
+                        </button>
+                    </div>
+                </form>
+            {% elif compra.estado == 'confirmado' %}
+                <div class="estado-actual confirmado">
+                    <i class="fas fa-check-circle"></i>
+                    <p>Pago verificado y confirmado</p>
+                    <span class="fecha-confirmacion">{{ compra.fecha_confirmacion|date:"d/m/Y H:i" }}</span>
                 </div>
-            </form>
+            {% elif compra.estado == 'rechazado' %}
+                <div class="estado-actual rechazado">
+                    <i class="fas fa-times-circle"></i>
+                    <p>Pago rechazado</p>
+                    <p class="motivo-rechazo">Motivo: {{ compra.motivo_rechazo }}</p>
+                    <span class="fecha-rechazo">{{ compra.fecha_rechazo|date:"d/m/Y H:i" }}</span>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

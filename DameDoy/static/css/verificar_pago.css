@@ -135,6 +135,50 @@
     margin-top: var(--espaciado-lg);
 }
 
+/* Agregar estos estilos */
+.estado-actual {
+    text-align: center;
+    padding: var(--espaciado-lg);
+    border-radius: var(--radio-borde-md);
+    margin-top: var(--espaciado-md);
+}
+
+.estado-actual i {
+    font-size: 2rem;
+    margin-bottom: var(--espaciado-sm);
+}
+
+.estado-actual p {
+    margin: var(--espaciado-xs) 0;
+    font-size: var(--tamaño-texto-lg);
+    font-weight: var(--peso-medio);
+}
+
+.estado-actual.confirmado {
+    background-color: var(--color-exito-claro);
+    color: var(--color-exito);
+}
+
+.estado-actual.rechazado {
+    background-color: var(--color-error-claro);
+    color: var(--color-error);
+}
+
+.fecha-confirmacion,
+.fecha-rechazo {
+    display: block;
+    font-size: var(--tamaño-texto-sm);
+    color: var(--texto-secundario);
+    margin-top: var(--espaciado-sm);
+}
+
+.motivo-rechazo {
+    font-size: var(--tamaño-texto-sm);
+    color: var(--texto-secundario);
+    margin-top: var(--espaciado-xs);
+    font-style: italic;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .verificar-grid {

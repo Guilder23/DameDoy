@@ -742,6 +742,31 @@ nav {
     font-size: var(--tamaño-texto-sm);
 }
 
+/* Agregar o actualizar los estilos de estados */
+.estado-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--espaciado-xs);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radio-borde-sm);
+    font-size: var(--tamaño-texto-sm);
+}
+
+.estado-badge.confirmado {
+    background-color: var(--color-exito-claro);
+    color: var(--color-exito);
+}
+
+.estado-badge.rechazado {
+    background-color: var(--color-error-claro);
+    color: var(--color-error);
+}
+
+.estado-badge.pendiente {
+    background-color: var(--color-advertencia-claro);
+    color: var(--color-advertencia);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .sidebar {
