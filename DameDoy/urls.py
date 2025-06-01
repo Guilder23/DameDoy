@@ -33,4 +33,8 @@ urlpatterns = [
     path('verificar-pago/<int:compra_id>/', views.verificar_pago, name='verificar_pago'),
 
     path('mis-compras/', views.mis_compras, name='mis_compras'),
+
+    # Rutas para ventas
+    path('mis-ventas/', views.mis_ventas, name='mis_ventas'),
+    path('venta/<int:venta_id>/', views.detalle_venta, name='detalle_venta'),
 ]

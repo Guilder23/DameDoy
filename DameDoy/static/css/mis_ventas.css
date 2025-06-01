@@ -1,0 +1,181 @@
+.mis-ventas-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: var(--espaciado-lg);
+}
+
+/* Dashboard de estadísticas */
+.stats-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--espaciado-md);
+    margin-bottom: var(--espaciado-xl);
+}
+
+.stat-card {
+    background: var(--fondo-primario);
+    padding: var(--espaciado-lg);
+    border-radius: var(--radio-borde-lg);
+    box-shadow: var(--sombra-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-md);
+}
+
+.stat-card i {
+    font-size: 2rem;
+    color: var(--color-primario);
+}
+
+.stat-info h3 {
+    margin: 0;
+    font-size: var(--tamaño-texto-md);
+    color: var(--texto-secundario);
+}
+
+.stat-number {
+    font-size: var(--tamaño-texto-xl);
+    font-weight: var(--peso-bold);
+    color: var(--texto-primario);
+    margin: var(--espaciado-xs) 0 0;
+}
+
+/* Materiales más vendidos */
+.materiales-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--espaciado-md);
+    margin: var(--espaciado-md) 0;
+}
+
+.material-card {
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-md);
+    overflow: hidden;
+    box-shadow: var(--sombra-sm);
+}
+
+.material-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.material-info {
+    padding: var(--espaciado-md);
+}
+
+.ventas-count {
+    color: var(--texto-secundario);
+    font-size: var(--tamaño-texto-sm);
+}
+
+/* Tabla de historial */
+.ventas-tabla {
+    overflow-x: auto;
+    margin: var(--espaciado-md) 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: var(--espaciado-md);
+    text-align: left;
+    border-bottom: 1px solid var(--borde-claro);
+}
+
+th {
+    background: var(--fondo-secundario);
+    font-weight: var(--peso-bold);
+}
+
+/* Lista de ventas */
+.venta-item {
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-md);
+    margin-bottom: var(--espaciado-md);
+    overflow: hidden;
+}
+
+.venta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--espaciado-md);
+    background: var(--fondo-secundario);
+}
+
+.venta-fecha {
+    color: var(--texto-secundario);
+    font-size: var(--tamaño-texto-sm);
+}
+
+.venta-detalles {
+    padding: var(--espaciado-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comprador-info {
+    display: flex;
+    gap: var(--espaciado-lg);
+}
+
+.comprador-info p {
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-xs);
+    margin: 0;
+}
+
+.btn-detalles {
+    padding: var(--espaciado-sm) var(--espaciado-md);
+    background: var(--color-primario);
+    color: white;
+    border-radius: var(--radio-borde-sm);
+    text-decoration: none;
+    transition: var(--transition-suave);
+}
+
+/* Estado vacío */
+.no-ventas {
+    text-align: center;
+    padding: var(--espaciado-xl);
+    color: var(--texto-secundario);
+}
+
+.no-ventas i {
+    font-size: 3rem;
+    margin-bottom: var(--espaciado-md);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stats-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .comprador-info {
+        flex-direction: column;
+        gap: var(--espaciado-xs);
+    }
+
+    .venta-header {
+        flex-direction: column;
+        gap: var(--espaciado-sm);
+    }
+
+    .venta-detalles {
+        flex-direction: column;
+        gap: var(--espaciado-md);
+    }
+
+    .btn-detalles {
+        width: 100%;
+        text-align: center;
+    }
+}

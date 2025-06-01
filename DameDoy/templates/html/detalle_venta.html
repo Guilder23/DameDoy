@@ -1,0 +1,122 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Detalle de Venta{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/detalle_venta.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="detalle-venta-container">
+    <div class="volver-link">
+        <a href="{% url 'mis_ventas' %}">
+            <i class="fas fa-arrow-left"></i> Volver a Mis Ventas
+        </a>
+    </div>
+
+    <div class="venta-grid">
+        <!-- Información principal de la venta -->
+        <div class="venta-principal">
+            <div class="venta-header">
+                <h1>Detalle de Venta #{{ venta.id }}</h1>
+                <span class="estado-badge {{ venta.compra.estado }}">
+                    {{ venta.compra.get_estado_display }}
+                </span>
+            </div>
+
+            <div class="material-info">
+                <img src="{{ venta.material.imagen.url }}" alt="{{ venta.material.titulo }}">
+                <div class="material-detalles">
+                    <h2>{{ venta.material.titulo }}</h2>
+                    <p class="categoria">
+                        <i class="fas fa-folder"></i> 
+                        {{ venta.material.get_categoria_display }}
+                    </p>
+                    <p class="facultad">
+                        <i class="fas fa-university"></i>
+                        {{ venta.material.facultad }}
+                    </p>
+                    <p class="precio">
+                        <i class="fas fa-tag"></i>
+                        ${{ venta.precio_unitario }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="detalles-transaccion">
+                <h3>Detalles de la Transacción</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">Fecha de Venta</span>
+                        <span class="valor">{{ venta.compra.fecha_confirmacion|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Comprador</span>
+                        <span class="valor">{{ venta.compra.usuario.get_full_name|default:venta.compra.usuario.username }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Código de Seguimiento</span>
+                        <span class="valor">{{ venta.compra.codigo_seguimiento }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Método de Pago</span>
+                        <span class="valor">Transferencia Bancaria</span>
+                    </div>
+                </div>
+            </div>
+
+            {% if venta.compra.comprobante %}
+            <div class="comprobante-seccion">
+                <h3>Comprobante de Pago</h3>
+                <div class="comprobante-preview">
+                    <img src="{{ venta.compra.comprobante.url }}" alt="Comprobante">
+                    <a href="{{ venta.compra.comprobante.url }}" class="btn-expandir" target="_blank">
+                        <i class="fas fa-expand-alt"></i> Ver completo
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Información lateral -->
+        <div class="venta-lateral">
+            <!-- Historial del material -->
+            <div class="historial-seccion">
+                <h3>Historial de Ventas del Material</h3>
+                {% for hist in historial_material %}
+                <div class="historial-item">
+                    <div class="historial-fecha">
+                        {{ hist.compra.fecha_confirmacion|date:"d/m/Y" }}
+                    </div>
+                    <div class="historial-detalles">
+                        <p class="precio">${{ hist.precio_unitario }}</p>
+                        <p class="comprador">{{ hist.compra.usuario.username }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="no-historial">No hay ventas previas de este material</p>
+                {% endfor %}
+            </div>
+
+            <!-- Historial del comprador -->
+            <div class="historial-seccion">
+                <h3>Historial del Comprador</h3>
+                {% for hist in historial_comprador %}
+                <div class="historial-item">
+                    <div class="historial-fecha">
+                        {{ hist.compra.fecha_confirmacion|date:"d/m/Y" }}
+                    </div>
+                    <div class="historial-detalles">
+                        <p class="material">{{ hist.material.titulo }}</p>
+                        <p class="precio">${{ hist.precio_unitario }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="no-historial">Este es la primera compra del usuario</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

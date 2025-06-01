@@ -162,6 +162,12 @@
                         <span class="sidebar-text">Mis compras</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{% url 'mis_ventas' %}" class="sidebar-link {% if request.resolver_match.url_name == 'mis_ventas' %}active{% endif %}">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="sidebar-text">Mis Ventas</span>
+                    </a>
+                </li>
                 <li class="sidebar-divider"></li>
                 <li>
                     <a href="{% url 'logout' %}" class="sidebar-link">

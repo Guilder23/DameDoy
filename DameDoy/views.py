@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Material, PerfilUsuario, CarritoItem, Compra, DetalleCompra, Notificacion  # Quitamos Facultad
-from django.db.models import Q
+from django.db.models import Q, Sum, Count
+from django.db.models.functions import TruncMonth
 from .forms import MaterialForm
 import json
 from django.http import JsonResponse
@@ -476,4 +477,73 @@ def mis_compras(request):
     compras = Compra.objects.filter(usuario=request.user).order_by('-fecha_creacion')
     return render(request, 'html/mis_compras.html', {
         'compras': compras
+    })
+
+@login_required
+def mis_ventas(request):
+    # Obtener todas las ventas (materiales vendidos)
+    ventas = DetalleCompra.objects.filter(
+        material__autor=request.user
+    ).select_related('compra', 'material')
+
+    # Estadísticas generales
+    estadisticas = {
+        'total_ventas': ventas.count(),
+        'ingresos_totales': ventas.aggregate(total=Sum('precio_unitario'))['total'] or 0,
+        'ventas_mes_actual': ventas.filter(
+            compra__fecha_confirmacion__month=timezone.now().month
+        ).count(),
+        'ingresos_mes': ventas.filter(
+            compra__fecha_confirmacion__month=timezone.now().month
+        ).aggregate(total=Sum('precio_unitario'))['total'] or 0,
+    }
+
+    # Ventas por mes
+    ventas_por_mes = ventas.annotate(
+        mes=TruncMonth('compra__fecha_confirmacion')
+    ).values('mes').annotate(
+        total=Sum('precio_unitario'),
+        cantidad=Count('id')
+    ).order_by('-mes')
+
+    # Materiales más vendidos
+    materiales_populares = Material.objects.filter(
+        autor=request.user,
+        estado='vendido'
+    ).annotate(
+        total_ventas=Count('detallecompra')
+    ).order_by('-total_ventas')[:5]
+
+    return render(request, 'html/mis_ventas.html', {
+        'ventas': ventas,
+        'estadisticas': estadisticas,
+        'ventas_por_mes': ventas_por_mes,
+        'materiales_populares': materiales_populares
+    })
+
+@login_required
+def detalle_venta(request, venta_id):
+    venta = get_object_or_404(DetalleCompra, 
+                             id=venta_id, 
+                             material__autor=request.user)
+    
+    # Obtener historial de ventas del mismo material
+    historial_material = DetalleCompra.objects.filter(
+        material=venta.material
+    ).exclude(
+        id=venta_id
+    ).select_related('compra').order_by('-compra__fecha_confirmacion')[:5]
+    
+    # Obtener historial de compras del usuario
+    historial_comprador = DetalleCompra.objects.filter(
+        compra__usuario=venta.compra.usuario,
+        material__autor=request.user
+    ).exclude(
+        id=venta_id
+    ).select_related('material', 'compra').order_by('-compra__fecha_confirmacion')
+    
+    return render(request, 'html/detalle_venta.html', {
+        'venta': venta,
+        'historial_material': historial_material,
+        'historial_comprador': historial_comprador,
     })

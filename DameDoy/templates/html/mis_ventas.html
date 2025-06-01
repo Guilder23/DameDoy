@@ -1,0 +1,122 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Mis Ventas{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/mis_ventas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="mis-ventas-container">
+    <h1>Mis Ventas</h1>
+
+    <!-- Dashboard de estadísticas -->
+    <div class="stats-dashboard">
+        <div class="stat-card">
+            <i class="fas fa-shopping-cart"></i>
+            <div class="stat-info">
+                <h3>Total Ventas</h3>
+                <p class="stat-number">{{ estadisticas.total_ventas }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-dollar-sign"></i>
+            <div class="stat-info">
+                <h3>Ingresos Totales</h3>
+                <p class="stat-number">${{ estadisticas.ingresos_totales|floatformat:2 }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-calendar-alt"></i>
+            <div class="stat-info">
+                <h3>Ventas Este Mes</h3>
+                <p class="stat-number">{{ estadisticas.ventas_mes_actual }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-chart-line"></i>
+            <div class="stat-info">
+                <h3>Ingresos Este Mes</h3>
+                <p class="stat-number">${{ estadisticas.ingresos_mes|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Materiales más vendidos -->
+    <div class="top-materiales">
+        <h2>Materiales Más Vendidos</h2>
+        <div class="materiales-grid">
+            {% for material in materiales_populares %}
+            <div class="material-card">
+                <img src="{{ material.imagen.url }}" alt="{{ material.titulo }}">
+                <div class="material-info">
+                    <h3>{{ material.titulo }}</h3>
+                    <p class="ventas-count">{{ material.total_ventas }} ventas</p>
+                    <p class="precio">${{ material.precio }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Historial de ventas por mes -->
+    <div class="ventas-historial">
+        <h2>Historial de Ventas</h2>
+        <div class="ventas-tabla">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mes</th>
+                        <th>Cantidad de Ventas</th>
+                        <th>Total Ingresos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venta in ventas_por_mes %}
+                    <tr>
+                        <td>{{ venta.mes|date:"F Y" }}</td>
+                        <td>{{ venta.cantidad }}</td>
+                        <td>${{ venta.total|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Lista detallada de ventas -->
+    <div class="ventas-lista">
+        <h2>Detalle de Ventas</h2>
+        {% for venta in ventas %}
+        <div class="venta-item">
+            <div class="venta-header">
+                <div class="venta-info">
+                    <h3>{{ venta.material.titulo }}</h3>
+                    <span class="venta-fecha">{{ venta.compra.fecha_confirmacion|date:"d/m/Y H:i" }}</span>
+                </div>
+                <div class="venta-estado">
+                    <span class="estado-badge {{ venta.compra.estado }}">
+                        {{ venta.compra.get_estado_display }}
+                    </span>
+                </div>
+            </div>
+            <div class="venta-detalles">
+                <div class="comprador-info">
+                    <p><i class="fas fa-user"></i> {{ venta.compra.usuario.get_full_name|default:venta.compra.usuario.username }}</p>
+                    <p><i class="fas fa-tag"></i> ${{ venta.precio_unitario }}</p>
+                </div>
+                <a href="{% url 'detalle_venta' venta.id %}" class="btn-detalles">
+                    Ver Detalles
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-ventas">
+            <i class="fas fa-store"></i>
+            <p>Aún no tienes ventas registradas</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

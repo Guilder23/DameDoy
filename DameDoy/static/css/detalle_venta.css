@@ -1,0 +1,204 @@
+.detalle-venta-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: var(--espaciado-lg);
+}
+
+.volver-link {
+    margin-bottom: var(--espaciado-lg);
+}
+
+.volver-link a {
+    color: var(--texto-secundario);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--espaciado-xs);
+}
+
+.venta-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--espaciado-xl);
+}
+
+/* Sección principal */
+.venta-principal {
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-lg);
+    padding: var(--espaciado-lg);
+    box-shadow: var(--sombra-sm);
+}
+
+.venta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--espaciado-lg);
+}
+
+.material-info {
+    display: flex;
+    gap: var(--espaciado-lg);
+    margin-bottom: var(--espaciado-xl);
+}
+
+.material-info img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radio-borde-md);
+}
+
+.material-detalles {
+    flex: 1;
+}
+
+.material-detalles p {
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-sm);
+    margin: var(--espaciado-sm) 0;
+    color: var(--texto-secundario);
+}
+
+/* Detalles de transacción */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--espaciado-md);
+    margin-top: var(--espaciado-md);
+}
+
+.info-item {
+    background: var(--fondo-secundario);
+    padding: var(--espaciado-md);
+    border-radius: var(--radio-borde-sm);
+}
+
+.label {
+    display: block;
+    color: var(--texto-secundario);
+    font-size: var(--tamaño-texto-sm);
+    margin-bottom: var(--espaciado-xs);
+}
+
+.valor {
+    font-weight: var(--peso-medio);
+    color: var(--texto-primario);
+}
+
+/* Comprobante */
+.comprobante-seccion {
+    margin-top: var(--espaciado-xl);
+}
+
+.comprobante-preview {
+    position: relative;
+    margin-top: var(--espaciado-md);
+}
+
+.comprobante-preview img {
+    max-width: 100%;
+    border-radius: var(--radio-borde-md);
+}
+
+.btn-expandir {
+    position: absolute;
+    top: var(--espaciado-md);
+    right: var(--espaciado-md);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: var(--espaciado-sm) var(--espaciado-md);
+    border-radius: var(--radio-borde-sm);
+    text-decoration: none;
+    transition: var(--transition-suave);
+}
+
+/* Sección lateral */
+.venta-lateral {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-xl);
+}
+
+.historial-seccion {
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-lg);
+    padding: var(--espaciado-lg);
+    box-shadow: var(--sombra-sm);
+}
+
+.historial-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--espaciado-md);
+    border-bottom: 1px solid var(--borde-claro);
+}
+
+.historial-item:last-child {
+    border-bottom: none;
+}
+
+.historial-fecha {
+    color: var(--texto-secundario);
+    font-size: var(--tamaño-texto-sm);
+}
+
+.historial-detalles {
+    text-align: right;
+}
+
+.no-historial {
+    color: var(--texto-secundario);
+    text-align: center;
+    padding: var(--espaciado-md);
+}
+
+/* Estados */
+.estado-badge {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radio-borde-sm);
+    font-size: var(--tamaño-texto-sm);
+    font-weight: var(--peso-medio);
+}
+
+.estado-badge.pendiente {
+    background: var(--color-advertencia-claro);
+    color: var(--color-advertencia);
+}
+
+.estado-badge.pagado {
+    background: var(--color-info-claro);
+    color: var(--color-info);
+}
+
+.estado-badge.confirmado {
+    background: var(--color-exito-claro);
+    color: var(--color-exito);
+}
+
+.estado-badge.rechazado {
+    background: var(--color-error-claro);
+    color: var(--color-error);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .venta-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .material-info {
+        flex-direction: column;
+    }
+
+    .material-info img {
+        width: 100%;
+        height: 300px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
