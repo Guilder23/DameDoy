@@ -38,25 +38,46 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        contenedor.innerHTML = notificaciones.map(notif => `
-            <div class="notif-item ${!notif.leida ? 'no-leida' : ''}">
-                ${notif.imagen ? `<img src="${notif.imagen}" class="notif-img" alt="Imagen">` : ''}
-                <div class="notif-content">
-                    <h4>${notif.titulo}</h4>
-                    <p>${notif.mensaje}</p>
-                    <span class="notif-fecha">${notif.fecha_relativa}</span>
+        contenedor.innerHTML = notificaciones.map(notif => {
+            let accionHtml = '';
+            
+            if (notif.tipo === 'pago_recibido') {
+                if (notif.compra && notif.compra.estado === 'pagado') {
+                    accionHtml = `
+                                    ${notif.imagen ? `<img src="${notif.imagen}" class="notif-img" alt="Imagen">` : ''}
+                        <a href="/verificar-pago/${notif.referencia_id}/" class="btn-verificar">
+                            <i class="fas fa-check"></i> Verificar pago
+                        </a>`;
+                } else if (notif.compra && notif.compra.estado === 'confirmado') {
+                    accionHtml = `
+                        <span class="estado-badge confirmado">
+                            <i class="fas fa-check-circle"></i> Pago verificado
+                        </span>`;
+                } else if (notif.compra && notif.compra.estado === 'rechazado') {
+                    accionHtml = `
+                        <span class="estado-badge rechazado">
+                            <i class="fas fa-times-circle"></i> Pago rechazado
+                        </span>`;
+                }
+            }
+
+            return `
+                <div class="notif-item ${!notif.leida ? 'no-leida' : ''}">
+                    ${notif.imagen ? `<img src="${notif.imagen}" class="notif-img" alt="Imagen">` : ''}
+                    <div class="notif-content">
+                        <h4>${notif.titulo}</h4>
+                        <p>${notif.mensaje}</p>
+                        <span class="notif-fecha">${notif.fecha_relativa}</span>
+                    </div>
+                    ${accionHtml}
                 </div>
-                ${notif.tipo === 'pago_recibido' ? `
-                    <a href="/verificar-pago/${notif.referencia_id}/" class="btn-verificar">
-                        Verificar pago
-                    </a>
-                ` : ''}
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     // Actualizar contador
     function actualizarContador(cantidad) {
+        const notifContador = document.getElementById('notifContador');
         if (cantidad > 0) {
             notifContador.textContent = cantidad;
             notifContador.style.display = 'flex';
@@ -97,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return cookieValue;
     }
 
-    // Actualizar notificaciones cada minuto
+    // Cargar notificaciones iniciales y actualizar cada minuto
+    cargarNotificaciones();
     setInterval(cargarNotificaciones, 60000);
 });

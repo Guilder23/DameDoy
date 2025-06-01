@@ -416,6 +416,12 @@ def notificaciones_recientes(request):
         usuario=request.user
     ).order_by('-fecha_creacion')[:5]
     
+    # Contar solo las no leídas y que estén pendientes de acción
+    no_leidas = Notificacion.objects.filter(
+        usuario=request.user,
+        leida=False
+    ).count()
+    
     data = [{
         'id': notif.id,
         'titulo': notif.titulo,
@@ -424,12 +430,14 @@ def notificaciones_recientes(request):
         'leida': notif.leida,
         'fecha_relativa': timesince(notif.fecha_creacion),
         'referencia_id': notif.referencia_id,
-        'imagen': notif.get_imagen_url() if hasattr(notif, 'get_imagen_url') else None
+        'compra': {
+            'estado': notif.compra.estado if hasattr(notif, 'compra') else None
+        }
     } for notif in notificaciones]
     
     return JsonResponse({
         'notificaciones': data,
-        'no_leidas': Notificacion.objects.filter(usuario=request.user, leida=False).count()
+        'no_leidas': no_leidas
     })
 
 @login_required

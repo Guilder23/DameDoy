@@ -194,4 +194,13 @@ class Notificacion(models.Model):
             except Compra.DoesNotExist:
                 pass
         return None  # O una URL de imagen por defecto
+    
+    @property
+    def compra(self):
+        if self.referencia_tipo == 'compra':
+            try:
+                return Compra.objects.get(id=self.referencia_id)
+            except Compra.DoesNotExist:
+                return None
+        return None
 
