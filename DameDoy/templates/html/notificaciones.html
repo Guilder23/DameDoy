@@ -41,13 +41,20 @@
                 <span class="notif-fecha">{{ notif.fecha_creacion|timesince }}</span>
             </div>
 
-            {% if notif.tipo == 'pago_recibido' and not notif.leida %}
+        {% if notif.tipo == 'pago_recibido' and not notif.leida %}
             <div class="notif-acciones">
                 <a href="{% url 'verificar_pago' notif.referencia_id %}" class="btn-verificar">
                     Verificar pago
                 </a>
             </div>
-            {% endif %}
+        {% else %}
+            <div class="notif-acciones">
+                <a href="{% url 'verificar_pago' notif.referencia_id %}" class="btn-verificar">
+                    Ver Verificacion
+                </a>
+            </div>
+        {% endif %}
+
         </div>
         {% empty %}
         <div class="no-notificaciones">

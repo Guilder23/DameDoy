@@ -3,12 +3,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const notifDropdown = document.getElementById('notifDropdown');
     const notifContador = document.getElementById('notifContador');
 
-    // Toggle dropdown
+    // Toggle dropdown y marcar como leídas
     notifBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         notifDropdown.classList.toggle('show');
+        
+        // Si se abre el dropdown, marcar como leídas y actualizar contador
         if (notifDropdown.classList.contains('show')) {
-            cargarNotificaciones();
+            fetch('/notificaciones/marcar-leidas/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Ocultar el contador cuando se ven las notificaciones
+                    actualizarContador(0);
+                    cargarNotificaciones();
+                }
+            });
         }
     });
 
@@ -25,7 +40,9 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 actualizarNotificaciones(data.notificaciones);
-                actualizarContador(data.no_leidas);
+                // Contar solo las notificaciones no leídas
+                const noLeidas = data.notificaciones.filter(notif => !notif.leida).length;
+                actualizarContador(noLeidas);
             });
     }
 
@@ -75,15 +92,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }).join('');
     }
 
-    // Actualizar contador
+    // Modificar la función actualizarContador para que sea más específica
     function actualizarContador(cantidad) {
         const notifContador = document.getElementById('notifContador');
-        if (cantidad > 0) {
-            notifContador.textContent = cantidad;
-            notifContador.style.display = 'flex';
-        } else {
-            notifContador.style.display = 'none';
+        if (!notifContador) {
+            // Si no existe el contador, crearlo
+            const nuevoContador = document.createElement('span');
+            nuevoContador.id = 'notifContador';
+            nuevoContador.className = 'notif-contador';
+            notifBtn.appendChild(nuevoContador);
         }
+        
+        const contador = notifContador || document.getElementById('notifContador');
+        contador.textContent = cantidad;
+        contador.style.display = 'flex'; // Siempre mostrar el contador
     }
 
     // Marcar todas como leídas
