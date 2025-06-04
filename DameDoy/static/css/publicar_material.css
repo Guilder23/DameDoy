@@ -1,12 +1,13 @@
-/* Variables específicas */
+/* 1. Variables */
 :root {
-    --form-max-width: 800px;
+    --form-max-width: 1200px;
     --input-height: 42px;
     --transition-suave: all 0.3s ease;
 }
 
-/* Contenedor principal */
+/* 2. Layout Principal */
 .publicar-container {
+    width: 100%;
     max-width: var(--form-max-width);
     margin: 2rem auto;
     padding: var(--espaciado-lg);
@@ -15,34 +16,23 @@
     box-shadow: var(--sombra-md);
 }
 
-/* Cabecera del formulario */
-.publicar-container h1 {
-    font-size: var(--tamaño-texto-2xl);
-    color: var(--texto-primario);
-    font-weight: var(--peso-bold);
-    margin: 0 0 var(--espaciado-xl);
-    padding-bottom: var(--espaciado-md);
-    border-bottom: 2px solid var(--borde-claro);
-}
-
-/* Grid del formulario */
+/* 3. Grid Responsivo */
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--espaciado-lg);
     margin-bottom: var(--espaciado-xl);
-}
-
-/* Grupos de formulario */
-.form-group {
-    margin-bottom: var(--espaciado-md);
 }
 
 .form-group.full-width {
     grid-column: 1 / -1;
 }
 
-/* Labels */
+/* 4. Estilos Base de Formulario */
+.form-group {
+    margin-bottom: var(--espaciado-md);
+}
+
 .form-group label {
     display: block;
     margin-bottom: var(--espaciado-xs);
@@ -53,13 +43,14 @@
 
 .required {
     color: var(--color-error);
-    margin-left: 4px;
+    margin-left: var(--espaciado-xs);
 }
 
-/* Inputs y Selects */
+/* 5. Inputs y Select2 */
 .form-group input,
 .form-group select,
-.form-group textarea {
+.form-group textarea,
+.select2-container .select2-selection--single {
     width: 100%;
     height: var(--input-height);
     padding: 0.5rem 1rem;
@@ -71,56 +62,156 @@
     transition: var(--transition-suave);
 }
 
+/* 6. Select2 Personalización */
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-container--default .select2-selection--single {
+    height: var(--input-height);
+    display: flex;
+    align-items: center;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--texto-primario);
+    line-height: normal;
+}
+
+/* 7. Select2 Modo Oscuro */
+[data-theme="modoOscuro"] .select2-container--default .select2-selection--single,
+[data-theme="modoOscuro"] .select2-dropdown,
+[data-theme="modoOscuro"] .select2-search__field {
+    background-color: var(--fondo-oscuro) !important;
+    color: var(--texto-claro) !important;
+    border-color: var(--borde-oscuro) !important;
+}
+
+/* 8. Textarea */
 .form-group textarea {
     height: 150px;
     resize: vertical;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--color-primario);
-    box-shadow: 0 0 0 3px var(--color-primario-claro);
-}
-
-/* Grupo de imagen */
+/* 9. File Input */
 .form-group.file-input {
-    grid-column: 1 / -1;
-    background: var(--fondo-secundario);
     padding: var(--espaciado-lg);
+    background: var(--fondo-secundario);
     border-radius: var(--radio-borde-lg);
     text-align: center;
-    border: 2px dashed var(--borde-claro);
 }
 
 .imagen-preview {
-    margin: var(--espaciado-md) 0;
     max-width: 300px;
-    margin: 0 auto;
+    margin: var(--espaciado-md) auto;
 }
 
 .imagen-preview img {
     width: 100%;
     height: auto;
     border-radius: var(--radio-borde-md);
-    box-shadow: var(--sombra-sm);
 }
 
+/* 10. Botones */
+.form-actions {
+    display: flex;
+    gap: var(--espaciado-md);
+    justify-content: flex-end;
+    margin-top: var(--espaciado-xl);
+    flex-wrap: wrap;
+}
+
+.btn-publicar,
+.btn-cancelar {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radio-borde-md);
+    font-weight: var(--peso-medio);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 150px;
+    justify-content: center;
+}
+.btn-publicar {
+    background-color: var(--color-primario);
+    color: white;
+    border: 1px solid var(--borde-claro);
+    box-shadow: var(--sombra-sm);
+
+}
+.btn-publicar:hover {
+    background-color: var(--color-primario-hover);
+    box-shadow: var(--sombra-md);
+}
+.btn-cancelar {
+    background-color: var(--color-secundario);
+    color: white;
+    text-decoration: none;
+    border: 1px solid var(--borde-claro);
+}
+.btn-cancelar:hover {
+    background-color: var(--color-secundario-hover);
+
+}
+/* 11. Media Queries */
+@media (max-width: 768px) {
+    .publicar-container {
+        margin: 1rem;
+        padding: var(--espaciado-md);
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: var(--espaciado-sm);
+    }
+
+    .btn-publicar,
+    .btn-cancelar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-group input,
+    .form-group select,
+    .form-group textarea,
+    .select2-container .select2-selection--single {
+        font-size: 16px; /* Previene zoom en iOS */
+    }
+
+    .imagen-preview {
+        max-width: 100%;
+    }
+}
+
+/* 12. Animaciones y Estados */
+.btn-publicar:hover,
+.btn-cancelar:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--sombra-md);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
+.select2-container--default.select2-container--focus .select2-selection--single {
+    outline: none;
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 3px var(--color-primario-claro);
+}
+
+/* 13. Utilidades */
 .help-text {
     display: block;
-    color: var(--texto-secundario);
     font-size: var(--tamaño-texto-sm);
+    color: var(--texto-secundario);
     margin-top: var(--espaciado-xs);
 }
 
-/* Estados de validación */
-.invalid {
-    border-color: var(--color-error) !important;
-    background-color: var(--color-error-claro) !important;
-}
-
-/* Alertas */
 .alert {
     padding: var(--espaciado-md);
     border-radius: var(--radio-borde-md);
@@ -129,68 +220,5 @@
 
 .alert-error {
     background-color: var(--color-error-claro);
-    border: 1px solid var(--color-error);
     color: var(--color-error);
-}
-
-/* Botones de acción */
-.form-actions {
-    display: flex;
-    gap: var(--espaciado-md);
-    justify-content: flex-end;
-    margin-top: var(--espaciado-xl);
-    padding-top: var(--espaciado-lg);
-    border-top: 1px solid var(--borde-claro);
-}
-
-.btn-publicar,
-.btn-cancelar {
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--radio-borde-md);
-    font-weight: var(--peso-medio);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: var(--transition-suave);
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.btn-publicar {
-    background: var(--color-primario);
-    color: white;
-    border: none;
-}
-
-.btn-publicar:hover {
-    background: var(--color-primario-hover);
-    transform: translateY(-2px);
-    box-shadow: var(--sombra-md);
-}
-
-.btn-cancelar {
-    background: var(--fondo-terciario);
-    color: var(--texto-secundario);
-    border: 1px solid var(--borde-claro);
-}
-
-.btn-cancelar:hover {
-    background-color: var(--fondo-oscuro);
-}
-
-.field-errors {
-    color: var(--color-error);
-    font-size: var(--tamaño-texto-xs);
-    margin-top: var(--espaciado-xs);
-}
-
-.alert {
-    padding: var(--espaciado-sm);
-    border-radius: var(--radio-borde-sm);
-    margin-bottom: var(--espaciado-md);
-}
-
-.alert-error {
-    background-color: var(--color-error);
-    color: var(--fondo-primario);
 }

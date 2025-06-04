@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Material, PerfilUsuario, CarritoItem, Compra, DetalleCompra, Notificacion
+from .models import Material, PerfilUsuario, CarritoItem, Compra, DetalleCompra, Notificacion, Universidad, Facultad, Carrera, Materia, Docente
 
 @admin.register(Material)
 class MaterialAdmin(admin.ModelAdmin):
@@ -179,3 +179,60 @@ class NotificacionAdmin(admin.ModelAdmin):
     def marcar_como_no_leidas(self, request, queryset):
         queryset.update(leida=False)
     marcar_como_no_leidas.short_description = "Marcar notificaciones seleccionadas como no leídas"
+
+# Este código registra los modelos de la aplicación en el panel de administración de Django.
+@admin.register(Universidad)
+class UniversidadAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'siglas', 'activo')
+    search_fields = ('nombre', 'siglas')
+    list_filter = ('activo',)
+
+@admin.register(Facultad)
+class FacultadAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'siglas', 'universidad', 'activo')
+    search_fields = ('nombre', 'siglas')
+    list_filter = ('universidad', 'activo')
+
+@admin.register(Carrera)
+class CarreraAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'codigo', 'facultad', 'activo')
+    search_fields = ('nombre', 'codigo')
+    list_filter = ('facultad__universidad', 'facultad', 'activo')
+
+@admin.register(Materia)
+class MateriaAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'codigo', 'carrera', 'semestre', 'activo')
+    search_fields = ('nombre', 'codigo')
+    list_filter = ('carrera__facultad', 'carrera', 'semestre', 'activo')
+
+@admin.register(Docente)
+class DocenteAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'apellido', 'email', 'universidad', 'facultad', 'carrera', 'materia', 'activo')
+    search_fields = ('nombre', 'apellido', 'email')
+    list_filter = ('activo', 'universidad', 'facultad', 'carrera', 'materia')
+    ordering = ('apellido', 'nombre')
+    
+    fieldsets = (
+        ('Información Personal', {
+            'fields': ('nombre', 'apellido', 'email')
+        }),
+        ('Asignación Académica', {
+            'fields': ('universidad', 'facultad', 'carrera', 'materia')
+        }),
+        ('Estado', {
+            'fields': ('activo',)
+        })
+    )
+
+    class Media:
+        js = (
+            'admin/js/docente_admin.js',
+        )
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if obj:
+            form.base_fields['facultad'].queryset = Facultad.objects.filter(universidad=obj.universidad)
+            form.base_fields['carrera'].queryset = Carrera.objects.filter(facultad=obj.facultad)
+            form.base_fields['materia'].queryset = Materia.objects.filter(carrera=obj.carrera)
+        return form

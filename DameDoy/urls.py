@@ -40,4 +40,10 @@ urlpatterns = [
 
     # Detalle de compra
     path('compra/<str:codigo_seguimiento>/', views.detalle_compra, name='detalle_compra'),
+
+    # API endpoints Para
+    path('api/facultades/', views.get_facultades, name='get_facultades'),
+    path('api/carreras/', views.get_carreras, name='get_carreras'),
+    path('api/materias/', views.get_materias, name='get_materias'),
+    path('api/docentes/', views.get_docentes, name='get_docentes'),
 ]

@@ -3,8 +3,21 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Material, PerfilUsuario, CarritoItem, Compra, DetalleCompra, Notificacion  # Quitamos Facultad
-from django.db.models import Q, Sum, Count
+from django.db import models  # Agregar esta línea
+from .models import (
+    Material, 
+    PerfilUsuario, 
+    CarritoItem, 
+    Compra, 
+    DetalleCompra, 
+    Notificacion, 
+    Universidad,  # Agregar esta línea
+    Facultad, 
+    Carrera, 
+    Materia, 
+    Docente
+)
+from django.db.models import Q, Sum, Count, Min
 from django.db.models.functions import TruncMonth
 from .forms import MaterialForm
 import json
@@ -13,7 +26,9 @@ from django.views.decorators.http import require_POST
 from django.utils import timezone
 import uuid
 from django.utils.timesince import timesince
-
+from itertools import groupby
+from operator import itemgetter
+from django.db.models import Min 
 
 @login_required
 def inicio(request):
@@ -75,14 +90,24 @@ def publicar_material(request):
         if form.is_valid():
             material = form.save(commit=False)
             material.autor = request.user
-            material.estado = 'pendiente'  # Establecer estado inicial como pendiente
+            material.estado = 'pendiente'
             material.save()
             messages.success(request, f'¡Material enviado para revisión! {material.titulo}')
-            return redirect('mis_materiales')  # Redirigir a mis materiales para ver el estado
+            return redirect('mis_materiales')
     else:
         form = MaterialForm()
+
+    # Obtener los datos para los selects
+    context = {
+        'form': form,
+        'universidades': Universidad.objects.filter(activo=True),
+        'facultades': Facultad.objects.filter(activo=True),
+        'carreras': Carrera.objects.filter(activo=True),
+        'materias': Materia.objects.filter(activo=True),
+        'docentes': Docente.objects.filter(activo=True)
+    }
     
-    return render(request, 'html/publicar_material.html', {'form': form})
+    return render(request, 'html/publicar_material.html', context)
 
 
 def lista_materiales(request):
@@ -600,3 +625,59 @@ def detalle_venta(request, venta_id):
         'historial_material': historial_material,
         'historial_comprador': historial_comprador,
     })
+
+@login_required
+def get_facultades(request):
+    universidad_id = request.GET.get('universidad')
+    # Obtener solo las facultades únicas usando distinct y valores específicos
+    facultades = Facultad.objects.filter(
+        universidad_id=universidad_id, 
+        activo=True
+    ).values('nombre').distinct().annotate(
+        id=models.Min('id'),
+        siglas=models.Min('siglas')
+    )
+    
+    return JsonResponse(list(facultades), safe=False)
+
+@login_required
+def get_carreras(request):
+    facultad_id = request.GET.get('facultad')
+    # Obtener solo las carreras únicas usando distinct y valores específicos
+    carreras = Carrera.objects.filter(
+        facultad_id=facultad_id, 
+        activo=True
+    ).values('codigo').distinct().annotate(
+        id=models.Min('id'),
+        nombre=models.Min('nombre')
+    )
+    
+    return JsonResponse(list(carreras), safe=False)
+
+@login_required
+def get_materias(request):
+    carrera_id = request.GET.get('carrera')
+    # Obtener solo las materias únicas usando distinct y valores específicos
+    materias = Materia.objects.filter(
+        carrera_id=carrera_id, 
+        activo=True
+    ).values('codigo').distinct().annotate(
+        id=models.Min('id'),
+        nombre=models.Min('nombre'),
+        semestre=models.Min('semestre')
+    )
+    
+    return JsonResponse(list(materias), safe=False)
+
+@login_required
+def get_docentes(request):
+    materia_id = request.GET.get('materia')
+    # Obtener solo los docentes únicos usando distinct y valores específicos
+    docentes = Docente.objects.filter(
+        materia_id=materia_id, 
+        activo=True
+    ).values('nombre', 'apellido').distinct().annotate(
+        id=models.Min('id')
+    )
+    
+    return JsonResponse(list(docentes), safe=False)

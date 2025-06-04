@@ -2,6 +2,107 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.exceptions import ValidationError  # Agregar esta línea
+
+class Universidad(models.Model):
+    nombre = models.CharField(max_length=200)
+    siglas = models.CharField(max_length=20)
+    activo = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Universidad"
+        verbose_name_plural = "Universidades"
+        ordering = ['nombre']
+
+    def __str__(self):
+        return f"{self.siglas} - {self.nombre}"
+
+class Facultad(models.Model):
+    universidad = models.ForeignKey(Universidad, on_delete=models.CASCADE, related_name='facultades')
+    nombre = models.CharField(max_length=200)
+    siglas = models.CharField(max_length=20)
+    activo = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Facultad"
+        verbose_name_plural = "Facultades"
+        unique_together = ['universidad', 'siglas']
+        ordering = ['universidad', 'nombre']
+
+    def __str__(self):
+        return f"{self.universidad.siglas} - {self.siglas} - {self.nombre}"
+
+class Carrera(models.Model):
+    universidad = models.ForeignKey(Universidad, on_delete=models.CASCADE, related_name='carreras')
+    facultad = models.ForeignKey(Facultad, on_delete=models.CASCADE, related_name='carreras')
+    nombre = models.CharField(max_length=200)
+    codigo = models.CharField(max_length=20)
+    activo = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Carrera"
+        verbose_name_plural = "Carreras"
+        unique_together = ['universidad', 'facultad', 'codigo']
+        ordering = ['universidad', 'facultad', 'nombre']
+
+    def __str__(self):
+        return f"{self.universidad.siglas} - {self.facultad.siglas} - {self.codigo} - {self.nombre}"
+
+    def clean(self):
+        if self.facultad.universidad != self.universidad:
+            raise ValidationError('La facultad debe pertenecer a la universidad seleccionada')
+
+class Materia(models.Model):
+    universidad = models.ForeignKey(Universidad, on_delete=models.CASCADE, related_name='materias')
+    facultad = models.ForeignKey(Facultad, on_delete=models.CASCADE, related_name='materias')
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, related_name='materias')
+    nombre = models.CharField(max_length=200)
+    codigo = models.CharField(max_length=20)
+    semestre = models.IntegerField()
+    activo = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Materia"
+        verbose_name_plural = "Materias"
+        unique_together = ['universidad', 'facultad', 'carrera', 'codigo']
+        ordering = ['universidad', 'facultad', 'carrera', 'semestre', 'nombre']
+
+    def __str__(self):
+        return f"{self.universidad.siglas} - {self.carrera.codigo} - {self.codigo} - {self.nombre}"
+
+    def clean(self):
+        if self.carrera.facultad != self.facultad or self.carrera.universidad != self.universidad:
+            raise ValidationError('La carrera debe pertenecer a la facultad y universidad seleccionadas')
+
+class Docente(models.Model):
+    nombre = models.CharField(max_length=100)
+    apellido = models.CharField(max_length=100)
+    email = models.EmailField(null=True, blank=True)
+    universidad = models.ForeignKey(Universidad, on_delete=models.CASCADE)
+    facultad = models.ForeignKey(Facultad, on_delete=models.CASCADE)
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE)
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
+    activo = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Docente"
+        verbose_name_plural = "Docentes"
+        ordering = ['apellido', 'nombre']  # Ordenamiento simple
+        unique_together = ['universidad', 'facultad', 'carrera', 'materia', 'email']
+
+    def __str__(self):
+        return f"{self.apellido}, {self.nombre} - {self.materia}"
+
+    def clean(self):
+        if self.facultad and self.facultad.universidad != self.universidad:
+            raise ValidationError('La facultad debe pertenecer a la universidad seleccionada')
+        if self.carrera and (self.carrera.facultad != self.facultad or 
+                           self.carrera.universidad != self.universidad):
+            raise ValidationError('La carrera debe pertenecer a la facultad y universidad seleccionadas')
+        if self.materia and (self.materia.carrera != self.carrera or 
+                          self.materia.facultad != self.facultad or 
+                          self.materia.universidad != self.universidad):
+            raise ValidationError('La materia debe pertenecer a la carrera, facultad y universidad seleccionadas')
 
 class Material(models.Model):
     TIPO_MATERIAL = [
@@ -25,10 +126,11 @@ class Material(models.Model):
 
     titulo = models.CharField(max_length=200, verbose_name="Título", null=True, blank=True)
     tipo = models.CharField(max_length=50, choices=TIPO_MATERIAL, verbose_name="Tipo de Material", null=True, blank=True)
-    facultad = models.CharField(max_length=100, verbose_name="Facultad", null=True, blank=True)
-    carrera = models.CharField(max_length=100, verbose_name="Carrera", null=True, blank=True)
-    materia = models.CharField(max_length=100, verbose_name="Materia", null=True, blank=True)
-    docente = models.CharField(max_length=100, verbose_name="Nombre del Docente", null=True, blank=True)
+    universidad = models.ForeignKey(Universidad, on_delete=models.SET_NULL, null=True)
+    facultad = models.ForeignKey(Facultad, on_delete=models.SET_NULL, null=True)
+    carrera = models.ForeignKey(Carrera, on_delete=models.SET_NULL, null=True)
+    materia = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True)
+    docente = models.ForeignKey(Docente, on_delete=models.SET_NULL, null=True)
     descripcion = models.TextField(verbose_name="Descripción", null=True, blank=True)
     precio = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio", null=True, blank=True)
     fecha_publicacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Publicación")
