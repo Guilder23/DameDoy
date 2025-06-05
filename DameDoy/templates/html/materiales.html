@@ -107,11 +107,14 @@
                 <h3>{{ material.titulo }}</h3>
                 <span class="tipo-badge">{{ material.get_tipo_display }}</span>
                 <span class="estado estado-{{ material.estado|lower }}"> {{material.estado}} </span>
-                <span class="docente">{{material.docente|truncatechars:15}} </span>
+                <span class="docente"> <i class="fas fa-chalkboard-teacher"></i> {{material.docente|truncatechars:10}} </span>
                 <p class="descripcion">{{ material.descripcion|truncatechars:100 }}</p>
                 <div class="metadata">
-                    <span class="facultad">{{ material.facultad }}</span>
-                    <span class="carrera">{{ material.carrera }}</span>
+                    <span class="facultad"> <i class="fas fa-building"></i> {{ material.facultad }}</span>
+                    <div class="materia-carrera"> 
+                        <span class="carrera"><i class="fas fa-graduation-cap"></i> Carrera: {{ material.carrera.nombre }}</span>
+                        <span class="materia"><i class="fas fa-book-open"></i> Materia: {{ material.materia.nombre }}</span>
+                    </div>
                 </div>
                 <div class="precio-autor">
                     <span class="precio">$ {{ material.precio }}</span>

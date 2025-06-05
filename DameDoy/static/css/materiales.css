@@ -258,19 +258,35 @@
   text-decoration-thickness: 1.5px;
   text-decoration-color: var(--color-vendido);
 }
-
+.material-info .docente {
+    font-size: var(--tamaño-texto-sm); /* Reducido de md a sm */
+    color: var(--texto-muy-claro);
+}
 .descripcion {
   color: var(--texto-secundario);
   margin-bottom: var(--espaciado-sm);
   font-size: var(--tamaño-texto-sm);
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;        /* Para navegadores WebKit (Chrome, Safari) */
+  line-clamp: 2;                /* Propiedad estándar futura */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .metadata {
   display: flex;
-  gap: var(--espaciado-sm);
+  flex-direction: column;
+  gap: var(--espaciado-xs);
   margin-bottom: var(--espaciado-sm);
   font-size: var(--tamaño-texto-xs);
   color: var(--texto-claro);
+}
+.materia-carrera {
+  display: flex;
+  gap: var(--espaciado-xs);
+  align-items: center;
 }
 
 .precio-autor {

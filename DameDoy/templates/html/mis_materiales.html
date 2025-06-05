@@ -23,19 +23,21 @@
                 <span class="estado estado-{{ material.estado|lower }}">{{ material.get_estado_display }}</span>
             </div>
             
-            {% if material.imagen %}
-            <img src="{{ material.imagen.url }}" alt="{{ material.titulo }}" class="material-imagen">
-            {% else %}
-            <div class="material-imagen-placeholder">
-                <i class="fas fa-book"></i>
+            <div class="imagen-container">
+                {% if material.imagen %}
+                    <img src="{{ material.imagen.url }}" alt="{{ material.titulo }}" class="material-imagen">
+                {% else %}
+                    <div class="material-imagen-placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+                {% endif %}
             </div>
-            {% endif %}
 
             <div class="material-info">
                 <h3>{{ material.titulo }}</h3>
                 <p class="material-meta">
-                    <span><i class="fas fa-graduation-cap"></i> {{ material.materia }}</span>
                     <span><i class="fas fa-building"></i> {{ material.facultad }}</span>
+                    <span><i class="fas fa-graduation-cap"></i> {{ material.materia.nombre }}</span>
                 </p>
                 <p class="material-precio">
                     {% if material.precio %}

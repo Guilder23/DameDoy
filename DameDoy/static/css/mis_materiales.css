@@ -56,24 +56,45 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: var(--espaciado-lg);
+    align-items: start;
 }
 
 /* Tarjeta de material */
 .material-card {
-    height: var(--card-height);
+    height: auto;
+    min-height: auto;
     background: var(--fondo-primario);
     border-radius: var(--radio-borde-lg);
     box-shadow: var(--sombra-sm);
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     transition: var(--transition-hover);
     position: relative;
+    overflow: hidden; /* Cambiado de visible a hidden */
 }
 
-.material-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--sombra-lg);
+/* Contenedor de imagen */
+.imagen-container {
+    width: 100%;
+    height: var(--imagen-height);
+    overflow: hidden;
+    border-top-left-radius: var(--radio-borde-lg);
+    border-top-right-radius: var(--radio-borde-lg);
+}
+
+/* Imagen del material */
+.material-imagen,
+.material-imagen-placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: var(--fondo-secundario);
+    transition: transform 0.3s ease;
+}
+
+/* Hover efecto de la imagen */
+.material-card:hover .material-imagen {
+    transform: scale(1.05);
 }
 
 /* Estado del material */
@@ -104,70 +125,54 @@
 .estado-vendido { background: var(--color-vendido); }
 
 
-/* Imagen del material */
-.material-imagen,
-.material-imagen-placeholder {
-    width: 100%;
-    height: var(--imagen-height);
-    object-fit: cover;
-    background: var(--fondo-secundario);
-    transition: transform 0.3s ease;
-}
-
-.material-card:hover .material-imagen {
-    transform: scale(1.05);
-}
-
-.material-imagen-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--texto-secundario);
-    font-size: 3rem;
-}
-
 /* Información del material */
 .material-info {
-    padding: var(--espaciado-lg);
+    padding: var(--espaciado-md);
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--espaciado-sm);
+    gap: var(--espaciado-xs);
 }
 
 .material-info h3 {
     margin: 0;
-    font-size: var(--tamaño-texto-lg);
+    font-size: var(--tamaño-texto-md); /* Reducido de lg a md */
     color: var(--texto-primario);
     font-weight: var(--peso-bold);
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 .material-meta {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--espaciado-md);
+    flex-direction: column;
+    gap: var(--espaciado-sm);
     color: var(--texto-secundario);
-    font-size: var(--tamaño-texto-sm);
+    font-size: var(--tamaño-texto-xs); /* Reducido de sm a xs */
 }
 
 .material-meta span {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.25rem;
 }
 
 .material-precio {
-    margin-top: auto;
+    margin: 0;
+    color: var(--color-primario);
+    font-size: var(--tamaño-texto-sm); /* Reducido de md a sm */
     font-weight: var(--peso-medio);
-    color: var(--color-success);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.25rem;
+}
+
+.material-precio i {
+    font-size: var(--tamaño-texto-xs); /* Reducido el tamaño del ícono */
 }
 
 /* Acciones del material */
 .material-acciones {
+    width: 100%;
     padding: var(--espaciado-md);
     border-top: 1px solid var(--borde-claro);
     display: flex;
@@ -175,6 +180,8 @@
     align-items: center;
     gap: var(--espaciado-md);
     background: var(--fondo-secundario);
+    position: relative;
+    bottom: 0;
 }
 
 .estado-select {
@@ -294,12 +301,21 @@
 
     .material-card {
         height: auto;
-        min-height: var(--card-height);
+    }
+
+    .material-imagen,
+    .material-imagen-placeholder {
+        height: 200px; /* Altura fija para la imagen */
+    }
+
+    .material-info {
+        padding: var(--espaciado-md);
     }
 
     .material-acciones {
         flex-direction: column;
         gap: var(--espaciado-md);
+        padding: var(--espaciado-md);
     }
 
     .estado-select {
