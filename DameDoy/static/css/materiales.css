@@ -197,6 +197,8 @@
   overflow: hidden;
   transition: var(--transicion-normal);
   box-shadow: var(--sombra-sm);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .material-card:hover {
@@ -327,6 +329,8 @@
   justify-content: center;
   width: 32px;
   height: 32px;
+  position: relative;
+  z-index: 2;
 }
 
 .btn-agregar-carrito:hover {
@@ -345,6 +349,8 @@
   opacity: 0.5;
 }
 
+/* Evitar que el botón de carrito active el modal */
+
 /* Animación cuando se agrega al carrito */
 @keyframes agregadoAlCarrito {
   0% {
@@ -360,6 +366,129 @@
 
 .agregando-al-carrito {
   animation: agregadoAlCarrito 0.5s ease;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal-content {
+    position: relative;
+    background-color: var(--fondo-primario);
+    margin: 1rem auto;
+    max-width: 800px;
+    width: 90%;
+    border-radius: var(--radio-borde-lg);
+    box-shadow: var(--sombra-xl);
+}
+
+.modal-close {
+    position: absolute;
+    right: var(--espaciado-md);
+    top: var(--espaciado-md);
+    font-size: var(--tamaño-texto-xl);
+    color: var(--texto-secundario);
+    cursor: pointer;
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--fondo-secundario);
+    transition: var(--transition-suave);
+}
+
+.modal-close:hover {
+    background: var(--color-error-claro);
+    color: var(--color-error);
+}
+
+.modal-body {
+    padding: var(--espaciado-lg);
+}
+
+.modal-header {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: var(--espaciado-lg);
+    margin-bottom: var(--espaciado-lg);
+}
+
+.modal-imagen {
+    width: 100%;
+    border-radius: var(--radio-borde-md);
+    overflow: hidden;
+}
+
+.modal-imagen img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.modal-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-lg);
+}
+
+.modal-metadata {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--espaciado-lg);
+}
+
+.info-grupo {
+    padding: var(--espaciado-md);
+    background: var(--fondo-secundario);
+    border-radius: var(--radio-borde-md);
+}
+
+.info-grupo h3 {
+    margin-bottom: var(--espaciado-sm);
+    color: var(--texto-primario);
+    font-size: var(--tamaño-texto-md);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--espaciado-lg);
+    padding-top: var(--espaciado-md);
+    border-top: 1px solid var(--borde-claro);
+}
+
+/* Responsive del modal */
+@media (max-width: 768px) {
+    .modal-header {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-imagen img {
+        height: 200px;
+    }
+
+    .modal-metadata {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: var(--espaciado-md);
+        text-align: center;
+    }
 }
 
 /* Responsive */
