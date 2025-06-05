@@ -15,7 +15,8 @@ from .models import (
     Facultad, 
     Carrera, 
     Materia, 
-    Docente
+    Docente,
+    ArchivoMaterial  # Agregar modelo ArchivoMaterial
 )
 from django.db.models import Q, Sum, Count, Min
 from django.db.models.functions import TruncMonth
@@ -88,12 +89,31 @@ def publicar_material(request):
     if request.method == 'POST':
         form = MaterialForm(request.POST, request.FILES)
         if form.is_valid():
-            material = form.save(commit=False)
-            material.autor = request.user
-            material.estado = 'pendiente'
-            material.save()
-            messages.success(request, f'¡Material enviado para revisión! {material.titulo}')
-            return redirect('mis_materiales')
+            try:
+                # Guardar el material
+                material = form.save(commit=False)
+                material.autor = request.user
+                material.estado = 'pendiente'
+                material.save()
+                
+                # Procesar los archivos adjuntos
+                archivos = request.FILES.getlist('archivos')
+                for archivo in archivos:
+                    ArchivoMaterial.objects.create(
+                        material=material,
+                        archivo=archivo,
+                        nombre=archivo.name,
+                        tamanio=archivo.size
+                    )
+                
+                messages.success(request, f'¡Material "{material.titulo}" enviado para revisión!')
+                return redirect('mis_materiales')
+            except Exception as e:
+                messages.error(request, f'Error al guardar el material: {str(e)}')
+                print(f"Error al guardar: {str(e)}")  # Para debugging
+        else:
+            messages.error(request, 'Por favor corrige los errores en el formulario.')
+            print(f"Errores del formulario: {form.errors}")  # Para debugging
     else:
         form = MaterialForm()
 

@@ -306,3 +306,48 @@ class Notificacion(models.Model):
                 return None
         return None
 
+class ArchivoMaterial(models.Model):
+    material = models.ForeignKey(Material, on_delete=models.CASCADE, related_name='archivos')
+    archivo = models.FileField(
+        upload_to='archivos_materiales/',
+        verbose_name="Archivo"
+    )
+    nombre = models.CharField(max_length=255)
+    tipo_archivo = models.CharField(max_length=20)
+    tamanio = models.IntegerField(verbose_name="Tamaño en bytes")
+    fecha_subida = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Archivo de Material"
+        verbose_name_plural = "Archivos de Material"
+        ordering = ['-fecha_subida']
+
+    def __str__(self):
+        return f"{self.nombre} - {self.material.titulo}"
+
+    def get_extension(self):
+        return self.nombre.split('.')[-1].lower()
+
+    def save(self, *args, **kwargs):
+        # Determinar el tipo de archivo basado en la extensión
+        extension = self.get_extension()
+        tipo_mapping = {
+            'pdf': 'PDF',
+            'doc': 'Word', 'docx': 'Word',
+            'xls': 'Excel', 'xlsx': 'Excel',
+            'ppt': 'PowerPoint', 'pptx': 'PowerPoint',
+            'zip': 'ZIP',
+            'rar': 'RAR',
+            'txt': 'Texto'
+        }
+        self.tipo_archivo = tipo_mapping.get(extension, 'Otro')
+        
+        if not self.nombre:
+            self.nombre = self.archivo.name
+
+        # Establecer el tamaño del archivo
+        if not self.tamanio and self.archivo:
+            self.tamanio = self.archivo.size
+
+        super().save(*args, **kwargs)
+

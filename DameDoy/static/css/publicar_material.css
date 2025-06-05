@@ -112,6 +112,86 @@
     border-radius: var(--radio-borde-md);
 }
 
+/*Estilos para archivos que se suben*/
+.archivos-container {
+    margin-top: var(--espaciado-md);
+}
+
+.archivos-dropzone {
+    border: 2px dashed var(--borde-claro);
+    border-radius: var(--radio-borde-lg);
+    padding: var(--espaciado-xl);
+    text-align: center;
+    background: var(--fondo-secundario);
+    transition: all 0.3s ease;
+}
+
+.archivos-dropzone.dragover {
+    border-color: var(--color-primario);
+    background: var(--color-primario-claro);
+}
+
+.archivos-dropzone i {
+    font-size: 3rem;
+    color: var(--color-primario);
+    margin-bottom: var(--espaciado-md);
+}
+
+.btn-upload {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--color-primario);
+    color: white;
+    border-radius: var(--radio-borde-md);
+    cursor: pointer;
+    margin-top: var(--espaciado-sm);
+}
+
+.archivos-preview {
+    margin-top: var(--espaciado-md);
+    display: grid;
+    gap: var(--espaciado-sm);
+}
+
+.archivo-item {
+    display: flex;
+    align-items: center;
+    padding: var(--espaciado-sm);
+    background: var(--fondo-secundario);
+    border-radius: var(--radio-borde-md);
+}
+
+.archivo-item i {
+    font-size: 1.5rem;
+    margin-right: var(--espaciado-sm);
+}
+
+.archivo-info {
+    flex: 1;
+}
+
+.archivo-nombre {
+    font-weight: var(--peso-medio);
+    margin-bottom: 0.25rem;
+}
+
+.archivo-tamanio {
+    font-size: var(--tamaño-texto-xs);
+    color: var(--texto-secundario);
+}
+
+.archivo-eliminar {
+    color: var(--color-error);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--espaciado-xs);
+    border-radius: 50%;
+}
+
+.archivo-eliminar:hover {
+    background: var(--color-error-claro);
+}
 /* 10. Botones */
 .form-actions {
     display: flex;

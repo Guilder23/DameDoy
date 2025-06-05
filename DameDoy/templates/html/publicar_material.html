@@ -88,18 +88,6 @@
                     <option value="">Primero seleccione una materia</option>
                 </select>
             </div>
-
-            <div class="form-group full-width">
-                <label for="descripcion">Descripción <span class="required">*</span></label>
-                <textarea id="descripcion" 
-                          name="descripcion" 
-                          class="form-control"
-                          required 
-                          rows="4"
-                          minlength="10"
-                          placeholder="Describe el contenido del material"></textarea>
-            </div>
-
             <div class="form-group">
                 <label for="precio">Precio <span class="required">*</span></label>
                 <input type="number" 
@@ -111,7 +99,17 @@
                        step="0.01"
                        placeholder="0.00">
             </div>
-
+            <div class="form-group full-width">
+                <label for="descripcion">Descripción <span class="required">*</span></label>
+                <textarea id="descripcion" 
+                          name="descripcion" 
+                          class="form-control"
+                          required 
+                          rows="4"
+                          minlength="10"
+                          placeholder="Describe el contenido del material"></textarea>
+            </div>
+            <!-- Este div es para la imagen del material -->
             <div class="form-group file-input">
                 <label for="imagen">Imagen del Material <span class="required">*</span></label>
                 <div class="imagen-preview" id="imagenPreview"></div>
@@ -123,8 +121,31 @@
                        accept="image/*">
                 <small class="help-text">Formatos permitidos: JPG, PNG. Máximo 5MB</small>
             </div>
+            <!-- Este div es para los archivos del material: -->
+            <div class="form-group file-input">
+                <label for="archivos">Archivos del Material</label>
+                <div class="archivos-container">
+                    <div class="archivos-dropzone" id="archivosDropzone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Arrastra tus archivos aquí o</p>
+                        <label class="btn-upload">
+                            <span>Seleccionar archivos</span>
+                            <input type="file" 
+                                id="archivos" 
+                                name="archivos" 
+                                multiple
+                                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.txt"
+                                style="display: none;">
+                        </label>
+                    </div>
+                </div>
+                <small class="help-text">
+                    Formatos permitidos: PDF, Word, Excel, PowerPoint, ZIP, RAR, TXT. Máximo 50MB por archivo.
+                </small>
+            </div>
+            <!-- Aqui se previsualizarán los archivos subidos: -->
+            <div id="archivos-preview" class="archivos-preview"></div>
         </div>
-
         <div class="form-actions">
             <button type="submit" class="btn-publicar">
                 <i class="fas fa-paper-plane"></i> Publicar Material
