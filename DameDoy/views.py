@@ -353,7 +353,7 @@ def eliminar_del_carrito(request, material_id):
 
 @login_required
 def vista_compra(request):
-    items_carrito = CarritoItem.objects.filter(usuario=request.user)
+    items_carrito = CarritoItem.objects.filter(usuario=request.user).select_related('material')
     if not items_carrito:
         messages.warning(request, 'Tu carrito está vacío')
         return redirect('lista_materiales')
@@ -361,7 +361,7 @@ def vista_compra(request):
     total = sum(item.material.precio for item in items_carrito)
     vendedores = []
     
-    # Obtener información de pago de los vendedores
+    # Obtener información de pago de los vendedores y sus materiales con archivos
     for item in items_carrito:
         vendedor = {
             'usuario': item.material.autor,
@@ -369,9 +369,17 @@ def vista_compra(request):
             'materiales': [],
             'subtotal': 0
         }
+        
         for carrito_item in items_carrito:
             if carrito_item.material.autor == item.material.autor:
-                vendedor['materiales'].append(carrito_item.material)
+                # Obtener archivos del material
+                archivos = ArchivoMaterial.objects.filter(material=carrito_item.material)
+                material_info = {
+                    'material': carrito_item.material,
+                    'archivos': archivos,
+                    'total_archivos': archivos.count()
+                }
+                vendedor['materiales'].append(material_info)
                 vendedor['subtotal'] += carrito_item.material.precio
         
         if vendedor not in vendedores:

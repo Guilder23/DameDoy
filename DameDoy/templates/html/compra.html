@@ -29,11 +29,43 @@
                         Vendedor: {{ item.material.autor.get_full_name|default:item.material.autor.username }}
                     </p>
                     <p class="precio">${{ item.material.precio }}</p>
+                    
+                    <!-- Agregar sección de archivos -->
+                    <div class="archivos-material">
+                        <h4>
+                            <i class="fas fa-file-alt"></i> 
+                            Archivos incluidos ({{ item.material.archivos.count }})
+                        </h4>
+                        <div class="archivos-lista">
+                            {% for archivo in item.material.archivos.all %}
+                            <div class="archivo-item">
+                                {% with extension=archivo.get_extension %}
+                                {% if extension == 'pdf' %}
+                                    <i class="fas fa-file-pdf archivo-pdf"></i>
+                                {% elif extension in 'doc,docx' %}
+                                    <i class="fas fa-file-word archivo-word"></i>
+                                {% elif extension in 'xls,xlsx' %}
+                                    <i class="fas fa-file-excel archivo-excel"></i>
+                                {% elif extension in 'ppt,pptx' %}
+                                    <i class="fas fa-file-powerpoint archivo-powerpoint"></i>
+                                {% elif extension in 'zip,rar' %}
+                                    <i class="fas fa-file-archive archivo-zip"></i>
+                                {% else %}
+                                    <i class="fas fa-file archivo-otro"></i>
+                                {% endif %}
+                                {% endwith %}
+                                <span class="archivo-nombre">{{ archivo.nombre }}</span>
+                                <span class="archivo-tamaño">{{ archivo.tamanio|filesizeformat }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 <button class="btn-eliminar" onclick="eliminarItem('{{ item.id }}')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
+            {% empty %}
             {% endfor %}
         </div>
 

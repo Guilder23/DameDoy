@@ -51,7 +51,76 @@
     color: var(--texto-secundario);
     font-size: var(--tamaño-texto-sm);
 }
+/* Estilos para la sección de archivos */
+.archivos-material {
+    margin-top: var(--espaciado-md);
+    background: var(--fondo-secundario);
+    padding: var(--espaciado-sm);
+    border-radius: var(--radio-borde-sm);
+}
 
+.archivos-material h4 {
+    font-size: var(--tamaño-texto-sm);
+    color: var(--texto-secundario);
+    margin-bottom: var(--espaciado-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-xs);
+}
+
+.archivos-lista {
+    display: grid;
+    gap: var(--espaciado-xs);
+    max-height: 150px;
+    overflow-y: auto;
+    padding-right: var(--espaciado-xs);
+}
+
+.archivos-lista .archivo-item {
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-sm);
+    padding: var(--espaciado-xs);
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-xs);
+    font-size: var(--tamaño-texto-xs);
+}
+
+.archivo-nombre {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.archivo-tamaño {
+    color: var(--texto-secundario);
+    font-size: var(--tamaño-texto-xs);
+}
+
+/* Colores para los tipos de archivo */
+.archivo-pdf { color: var(--color-pdf); }
+.archivo-word { color: var(--color-word); }
+.archivo-excel { color: var(--color-excel); }
+.archivo-powerpoint { color: var(--color-powerpoint); }
+.archivo-zip { color: var(--color-zip); }
+.archivo-rar { color: var(--color-rar); }
+.archivo-txt { color: var(--color-txt); }
+.archivo-otro { color: var(--color-otro); }
+/* Scrollbar personalizado para la lista de archivos */
+.archivos-lista::-webkit-scrollbar {
+    width: 6px;
+}
+
+.archivos-lista::-webkit-scrollbar-track {
+    background: var(--fondo-secundario);
+    border-radius: 3px;
+}
+
+.archivos-lista::-webkit-scrollbar-thumb {
+    background: var(--color-primario);
+    border-radius: 3px;
+}
 /* Sección de pago */
 .pago-section {
     position: sticky;
