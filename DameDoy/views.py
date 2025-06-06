@@ -577,14 +577,21 @@ def detalle_compra(request, codigo_seguimiento):
                 'materiales': [],
                 'subtotal': 0
             }
-        materiales_por_vendedor[vendedor]['materiales'].append(detalle.material)
+        
+        # Obtener los archivos del material
+        archivos = ArchivoMaterial.objects.filter(material=detalle.material)
+        material_info = {
+            'material': detalle.material,
+            'archivos': archivos,
+            'subtotal': detalle.precio_unitario
+        }
+        materiales_por_vendedor[vendedor]['materiales'].append(material_info)
         materiales_por_vendedor[vendedor]['subtotal'] += detalle.precio_unitario
     
     return render(request, 'html/detalle_compra.html', {
         'compra': compra,
         'materiales_por_vendedor': materiales_por_vendedor,
     })
-
 @login_required
 def mis_ventas(request):
     # Obtener todas las ventas (materiales vendidos)

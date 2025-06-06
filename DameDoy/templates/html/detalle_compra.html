@@ -44,28 +44,79 @@
                 </div>
 
                 <div class="materiales-grid">
-                    {% for material in datos.materiales %}
+                    <!-- Dentro del bucle de materiales -->
+                    {% for material_info in datos.materiales %}
                     <div class="material-card">
-                        <div class="material-imagen">
-                            <img src="{{ material.imagen.url }}" alt="{{ material.titulo }}">
+                        <div class="material-content">
+                            <div class="material-imagen">
+                                <img src="{{ material_info.material.imagen.url }}" alt="{{ material_info.material.titulo }}">
+                            </div>
+                            <div class="material-info">
+                                <div class="material-header">
+                                    <h3>{{ material_info.material.titulo }}</h3>
+                                    <span class="tipo-badge">{{ material_info.material.get_tipo_display }}</span>
+                                </div>
+                                
+                                <div class="material-detalles">
+                                    <div class="detalle-item">
+                                        <i class="fas fa-university"></i>
+                                        <span>{{ material_info.material.facultad }}</span>
+                                    </div>
+                                    <div class="detalle-item">
+                                        <i class="fas fa-book-open"></i>
+                                        <span>{{ material_info.material.materia.nombre }}</span>
+                                    </div>
+                                    <div class="detalle-item">
+                                        <i class="fas fa-user-tie"></i>
+                                        <span>{{ material_info.material.docente.nombre }} {{ material_info.material.docente.apellido }}</span>
+                                    </div>
+                                    <div class="precio-tag">
+                                        <span>Bs {{ material_info.subtotal }}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="material-info">
-                            <h3>{{ material.titulo }}</h3>
-                            <p class="tipo">
-                                <i class="fas fa-bookmark"></i> 
-                                {{ material.get_tipo_display }}
-                            </p>
-                            <p class="materia">
-                                <i class="fas fa-book"></i>
-                                {{ material.materia }}
-                            </p>
-                            <p class="precio">${{ material.precio }}</p>
-                        </div>
-                        {% if compra.estado == 'confirmado' %}
-                        <div class="material-acciones">
-                            <a href="{{ material.archivo.url }}" class="btn-descargar" download>
-                                <i class="fas fa-download"></i> Descargar Material
-                            </a>
+
+                        {% if compra.estado == 'confirmado' and material_info.archivos %}
+                        <div class="archivos-seccion">
+                            <div class="archivos-header">
+                                <h4>
+                                    <i class="fas fa-file-alt"></i> 
+                                    Archivos del Material
+                                </h4>
+                                <span class="archivos-contador">{{ material_info.archivos|length }} archivo(s)</span>
+                            </div>
+                            
+                            <div class="archivos-grid">
+                                {% for archivo in material_info.archivos %}
+                                <div class="archivo-card">
+                                    {% with extension=archivo.get_extension %}
+                                    <div class="archivo-icono">
+                                        <i class="{% if extension == 'pdf' %}fas fa-file-pdf archivo-pdf
+                                            {% elif extension in 'doc,docx' %}fas fa-file-word archivo-word
+                                            {% elif extension in 'xls,xlsx' %}fas fa-file-excel archivo-excel
+                                            {% elif extension in 'ppt,pptx' %}fas fa-file-powerpoint archivo-powerpoint
+                                            {% elif extension in 'zip,rar' %}fas fa-file-archive archivo-zip
+                                            {% else %}fas fa-file archivo-otro{% endif %}"></i>
+                                    </div>
+                                    {% endwith %}
+                                    <div class="archivo-detalles">
+                                        <span class="archivo-nombre" title="{{ archivo.nombre }}">
+                                            {{ archivo.nombre }}
+                                        </span>
+                                        <span class="archivo-meta">
+                                            {{ archivo.tamanio|filesizeformat }}
+                                        </span>
+                                    </div>
+                                    <a href="{{ archivo.archivo.url }}" 
+                                       class="btn-descargar-archivo" 
+                                       download 
+                                       title="Descargar {{ archivo.nombre }}">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
                         {% endif %}
                     </div>
@@ -82,11 +133,11 @@
                 <div class="resumen-items">
                     <div class="resumen-item">
                         <span>Subtotal</span>
-                        <span>${{ compra.total }}</span>
+                        <span>Bs {{ compra.total }}</span>
                     </div>
                     <div class="resumen-item total">
                         <span>Total</span>
-                        <span>${{ compra.total }}</span>
+                        <span>Bs {{ compra.total }}</span>
                     </div>
                 </div>
             </div>

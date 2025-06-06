@@ -90,7 +90,7 @@
 }
 
 .material-card:hover {
-    transform: translateY(-4px);
+    /* transform: translateY(-4px); */
     box-shadow: var(--sombra-md);
 }
 
@@ -195,22 +195,277 @@
     margin-top: var(--espaciado-md);
 }
 
-@media (max-width: 768px) {
+/* Estilos para la sección de archivos */
+.archivos-seccion {
+    padding: var(--espaciado-lg);
+    background: var(--fondo-secundario);
+    border-top: 1px solid var(--borde-claro);
+    border-radius: 0 0 var(--radio-borde-lg) var(--radio-borde-lg);
+}
+
+.archivos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--espaciado-lg);
+}
+
+.archivos-header h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--texto-primario);
+    margin: 0;
+}
+
+.archivos-contador {
+    background: var(--color-primario);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.archivos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.archivo-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--fondo-primario);
+    border-radius: var(--radio-borde-md);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.archivo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.archivo-icono {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radio-borde-sm);
+    background: var(--fondo-secundario);
+}
+
+.archivo-icono i {
+    font-size: 1.5rem;
+}
+
+.archivo-detalles {
+    flex: 1;
+    min-width: 0;
+}
+
+.archivo-nombre {
+    display: block;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--texto-primario);
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.archivo-meta {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--texto-secundario);
+}
+
+.btn-descargar-archivo {
+    position: absolute;
+    right: 1rem;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--color-exito-claro);
+    color: var(--color-exito);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateX(10px);
+}
+
+.archivo-card:hover .btn-descargar-archivo {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.btn-descargar-archivo:hover {
+    background: var(--color-exito);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Colores para tipos de archivo */
+.archivo-pdf { color: #e74c3c; }
+.archivo-word { color: #3498db; }
+.archivo-excel { color: #2ecc71; }
+.archivo-powerpoint { color: #e67e22; }
+.archivo-zip, .archivo-rar { color: #9b59b6; }
+.archivo-otro { color: #95a5a6; }
+
+/* Animación para el botón de descarga */
+@keyframes pulseDownload {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.btn-descargar-archivo:active {
+    animation: pulseDownload 0.3s ease;
+}
+@media (max-width: 1024px) {
     .compra-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .compra-header {
         flex-direction: column;
-        text-align: center;
     }
 
-    .compra-meta {
-        text-align: center;
-        margin-top: var(--espaciado-md);
+    .panel-principal, .panel-lateral {
+        width: 100%;
+    }
+
+    .panel-lateral {
+        margin-top: 2rem;
     }
 
     .materiales-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Una columna en pantallas medianas */
+    }
+}
+@media (max-width: 768px) {
+  /* Reorganiza el layout en columna */
+  .compra-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* Asegura que los paneles usen todo el ancho */
+  .panel-principal,
+  .panel-lateral {
+    width: 100%;
+  }
+
+  /* Ajusta cabecera de la compra */
+  .compra-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  /* Vendedor y fecha */
+  .vendedor-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Materiales en columna */
+  .materiales-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Imagen del material */
+  .material-imagen img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Ajustes para el contenido del material */
+  .material-content {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Archivos: se apilan */
+  .archivo-card {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 90%;
+    font-size: var(--tamaño-texto-xs);
+    gap: 0.5rem;
+  }
+
+  .archivo-icono {
+    font-size:var(--tamaño-texto-xs);
+    padding: 0.5rem;
+  }
+
+  .btn-descargar-archivo {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Comprobante se adapta */
+  .comprobante-preview img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Ajustes de texto */
+  .compra-info h1,
+  .resumen-compra h2,
+  .comprobante-seccion h2,
+  .rechazo-seccion h2 {
+    font-size: 1.1rem;
+  }
+
+  .archivo-nombre,
+  .resumen-items {
+    font-size: 0.95rem;
+  }
+
+  /* Botones y textos largos */
+  .estado-badge {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.5rem;
+    word-wrap: break-word;
+  }
+}
+
+@media (max-width: 480px) {
+    .volver-link a {
+        font-size: 0.9rem;
+    }
+
+    .compra-info h1 {
+        font-size: 1.2rem;
+    }
+
+    .estado-badge {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .resumen-compra h2,
+    .comprobante-seccion h2,
+    .rechazo-seccion h2 {
+        font-size: 1rem;
+    }
+
+    .archivo-nombre {
+        font-size: 0.85rem;
+    }
+
+    .resumen-items {
+        font-size: 0.9rem;
     }
 }
